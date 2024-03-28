@@ -1,10 +1,17 @@
 ocp_version: 4.14.16
 ocp_channel: stable
 
+# mirror_mode defines, if you mirror to disk (file) or into the created mirror_registry (registry)
+mirror_mode: file
+
 # this dir is for the offline packages
 mirror_data_dir: /data/oc-mirror-data
 mirror_data_dir_owner: "{{ lookup('ansible.builtin.env', 'USER') }}"
 mirror_data_dir_group: "{{ lookup('ansible.builtin.env', 'USER') }}"
+
+# defines if you install the registry or not. The binary will get downloaded anyway
+install_registry: false
+
 mirror_registry_version: 1.3.10
 
 # this dir is the backend for the mirror registry
@@ -62,11 +69,11 @@ rh_operators_example:
   - odr-hub-operator
 
 
-certified_operators: null
+certified_operators: []
 certified_operators_example:
   - gpu-operator-certified
-marketplace_operators: null
-community_operators: null
+marketplace_operators: []
+community_operators: []
 
 additional_images:
   - k8s.gcr.io/sig-storage/nfs-subdir-external-provisioner:v4.0.2

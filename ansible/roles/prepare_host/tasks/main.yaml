@@ -58,6 +58,7 @@
     dest: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/mirror-registry"
   tags:
     - packages
+  when: install_registry is true
 
 - name: ensure execution permissions
   ansible.builtin.file:
@@ -96,6 +97,8 @@
 - name: set operatorversions (certified index)
   ansible.builtin.set_fact:
     certified_operator_packages: "{{ operator_versions }}"
+  when: ( certified_operators is defined ) and
+        ( certified_operators | length > 0 )
 
 - name: generate ImageSetConfiguration
   ansible.builtin.template:
