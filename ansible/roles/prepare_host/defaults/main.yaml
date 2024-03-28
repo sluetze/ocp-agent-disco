@@ -1,0 +1,72 @@
+ocp_version: 4.14.16
+ocp_channel: stable
+
+# this dir is for the offline packages
+mirror_data_dir: /data/oc-mirror-data
+mirror_data_dir_owner: "{{ lookup('ansible.builtin.env', 'USER') }}"
+mirror_data_dir_group: "{{ lookup('ansible.builtin.env', 'USER') }}"
+mirror_registry_version: 1.3.10
+
+# this dir is the backend for the mirror registry
+mirror_registry_data_dir: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/mirror-registry/data"
+mirror_registry_group: "{{ lookup('ansible.builtin.env', 'USER') }}"
+mirror_registry_user: "{{ lookup('ansible.builtin.env', 'USER') }}"
+
+rh_operators:
+  # can be inprecise, we grep for this names in the operator list
+  # small useful operators
+  - web-terminal
+  # storage operators
+  # layered products
+  - serverless
+
+rh_operators_example:
+  # can be inprecise, we grep for this names in the operator list
+  # small useful operators
+  - web-terminal
+  # storage operators
+  - lvms-operator
+
+  # ocp parts
+  - openshift-gitops-operator
+  - devspaces
+  - serverless
+  - cincinnati-operator
+  - devworkspace-operator
+  - openshift-pipelines-operator-rh
+  - compliance-operator
+  - file-integrity-operator
+  - openshift-cert-manager-operator
+  - security-profiles-operator
+
+  # layered products
+  # data science
+  - rhods-operator
+  # quay
+  - quay-operator
+  - quay-bridge-operator
+  - container-security-operator
+  # acm
+  - advanced-cluster-management
+  - gatekeeper-operator-product
+  - multicluster-engine
+  # acs
+  - rhacs-operator
+  # odf
+  - ocs-client-operator
+  - ocs-operator
+  - odf-csi-addons-operator
+  - odf-multicluster-orchestrator
+  - odf-operator
+  - odr-cluster-operator
+  - odr-hub-operator
+
+
+certified_operators: null
+certified_operators_example:
+  - gpu-operator-certified
+marketplace_operators: null
+community_operators: null
+
+additional_images:
+  - k8s.gcr.io/sig-storage/nfs-subdir-external-provisioner:v4.0.2

@@ -1,0 +1,30 @@
+# there are multiple ugly hacks here, since oc-mirror currently does not support any output format other than a space limited table
+- name: generate package list
+  ansible.builtin.shell:
+    cmd: 'oc-mirror list operators --catalog={{ operator_catalog }}:v{{ ocp_version[:4] }} > packages.out'
+  register: packages
+    #creates: package.out
+
+- name: get channel for each operator
+  ansible.builtin.shell:
+    #cmd: echo {{ packages.stdout }} | grep {{ item }} | tr -s " " | awk '{ print $1, $NF}' | sed -e 's/^/{"name":"/g' -e 's/ /","channel":"/g' -e 's/$/"}/g'
+    cmd: cat packages.out | grep {{ item }} | tr -s " " | awk '{ print $1, $NF}' | sed -e 's/^/{"name":"/g' -e 's/ /","channel":"/g' -e 's/$/"}/g'
+  register: operator_package_channels
+  loop: "{{ operators }}"
+
+- name: debug
+  ansible.builtin.debug:
+    msg: "{{ operator_package_channels.results | map(attribute='stdout') | map('from_json') | list }}"
+  tags:
+    - never
+    - debug
+
+- name: get latest versions for each operator
+  ansible.builtin.shell:
+    cmd: oc-mirror list operators --catalog={{ operator_catalog }}:v{{ ocp_version[:4] }} --package={{ item.name }} --channel={{ item.channel }}
+  register: operator_package_channels_versions
+  loop: "{{ operator_package_channels.results | map(attribute='stdout') | map('from_json') | list }}"
+
+- name: create callback fact
+  ansible.builtin.set_fact:
+    operator_versions: "{{ operator_package_channels_versions.results }}"

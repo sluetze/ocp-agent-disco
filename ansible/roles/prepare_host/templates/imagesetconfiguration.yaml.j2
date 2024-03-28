@@ -1,0 +1,46 @@
+# created using guidance in https://access.redhat.com/solutions/6994677
+kind: ImageSetConfiguration
+apiVersion: mirror.openshift.io/v1alpha2
+#archiveSize: 4
+storageConfig:
+ local:
+   path: {{ mirror_registry_data_dir }}
+mirror:
+  platform:
+    channels:
+      - name: {{ ocp_channel }}-{{ ocp_version[:4] }}
+        type: ocp
+        minVersion: '{{ ocp_version }}'
+        maxVersion: '{{ ocp_version }}'
+    graph: true
+  operators:
+{% if rh_operator_packages is defined and rh_operator_packages | length > 0 %}
+    - catalog: registry.redhat.io/redhat/redhat-operator-index:v{{ ocp_version[:4] }}
+      packages:
+{% for package in rh_operator_packages %}
+        - name: {{ package.item.name }}
+          channels:
+            - name: {{ package.item.channel }}
+              minVersion: {{ package.stdout_lines[2:] | community.general.version_sort | last }}
+              maxVersion: {{ package.stdout_lines[2:] | community.general.version_sort | last }}
+{% endfor %}
+{% endif %}
+
+{% if certified_operator_packages is defined and certified_operator_packages | length > 0 %}
+    - catalog: registry.redhat.io/redhat/certified-operator-index:v{{ ocp_version[:4] }}
+      packages:
+{% for certified_package in certified_operator_packages %}
+        - name: {{ certified_package.item.name }}
+          channels:
+            - name: {{ certified_package.item.channel }}
+              minVersion: {{ certified_package.stdout_lines[2:] | community.general.version_sort | last }}
+              maxVersion: {{ certified_package.stdout_lines[2:] | community.general.version_sort | last }}
+{% endfor %}
+{% endif %}
+
+{% if additonal_images is defined and rh_operator_packages | length > 0 %}
+  additionalImages:
+{% for image in additonal_images %}
+    - name: {{ image }}
+{% endfor %}
+{% endif %}

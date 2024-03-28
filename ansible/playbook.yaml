@@ -1,0 +1,7 @@
+- name: playbook
+  hosts: localhost
+  roles:
+    - role: prepare_host
+
+
+# REQUIRES ansible-galaxy collection install community.general
