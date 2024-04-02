@@ -68,12 +68,9 @@ rh_operators_example:
   - odr-cluster-operator
   - odr-hub-operator
 
-
 certified_operators: []
 certified_operators_example:
   - gpu-operator-certified
-marketplace_operators: []
-community_operators: []
 
 additional_images:
   - k8s.gcr.io/sig-storage/nfs-subdir-external-provisioner:v4.0.2
