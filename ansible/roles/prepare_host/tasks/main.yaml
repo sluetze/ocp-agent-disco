@@ -38,3 +38,37 @@
 - name: mirror to local disk
   ansible.builtin.command:
     cmd: oc-mirror --config "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/mirror-registry/imagesetconfiguration.yaml" "file://{{ mirror_data_dir }}"
+    creates: "{{ mirror_data_dir }}/mirror_seq1_000000.tar"
+  register: mirror_result
+  tags:
+   - mirror
+
+- name: create manifests
+  ansible.builtin.command:
+    cmd: oc-mirror --from={{ mirror_data_dir }}/mirror_seq1_000000.tar --manifests-only docker://{{ mirror_registry_hostname }}
+  #  creates: oc-mirror-workspace
+  register: manifests_out
+  tags:
+    - mirror
+    - manifests
+
+- name: register folder fact
+  ansible.builtin.set_fact:
+    oc_mirror_manifest_icsp: "{{ manifests_out.stdout_lines | regex_search('oc-mirror-workspace/results-[0-9]{10}') }}/imageContentSourcePolicy.yaml"
+  tags:
+    - mirror
+    - manifests
+
+- name: load imagecontentset
+  ansible.builtin.set_fact:
+    oc_mirror_imagecontentset: "{{ lookup('ansible.builtin.file', oc_mirror_manifest_icsp ) | from_yaml_all  }}"
+  tags:
+    - mirror
+    - manifests
+
+- name: debug imagecontentset
+  ansible.builtin.debug:
+    var: oc_mirror_imagecontentset
+  tags:
+    - mirror
+    - manifests
