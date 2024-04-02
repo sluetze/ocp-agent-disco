@@ -1,77 +1,6 @@
 ---
-- name: Install packages
-  become: true
-  ansible.builtin.package:
-    name:
-      - nmstate
-    state: present
-  tags:
-    - packages
-
-- name: ensure ocp_tools directory
-  become: true
-  ansible.builtin.file:
-    state: directory
-    name: "{{ item }}"
-    mode: 0700
-    owner: "{{ mirror_data_dir_group }}"
-    group: "{{ mirror_data_dir_owner }}"
-  loop:
-    - "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools"
-    - "{{ lookup('ansible.builtin.env', 'HOME') }}/.local/bin"
-    - "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/mirror-registry"
-    - "{{ mirror_registry_data_dir }}"
-    - "{{ mirror_data_dir }}"
-  tags:
-    - packages
-
-- name: download client tools
-  ansible.builtin.get_url:
-    url: "{{ item }}"
-    dest: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/."
-  loop:
-    - "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_version }}/oc-mirror.tar.gz"
-    - "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_version }}/openshift-client-linux-{{ ocp_version }}.tar.gz"
-    - "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_version }}/openshift-install-linux-{{ ocp_version }}.tar.gz"
-    - "https://developers.redhat.com/content-gateway/file/pub/openshift-v4/clients/mirror-registry/{{ mirror_registry_version }}/mirror-registry.tar.gz"
-  tags:
-    - packages
-
-- name: extract client tools
-  ansible.builtin.unarchive:
-    src: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/{{ item.tar }}"
-    dest: "{{ lookup('ansible.builtin.env', 'HOME') }}/.local/bin"
-    creates: "{{ lookup('ansible.builtin.env', 'HOME') }}/.local/bin/{{ item.bin }}"
-  loop:
-    - tar: oc-mirror.tar.gz
-      bin: oc-mirror
-    - tar: "openshift-client-linux-{{ ocp_version }}.tar.gz"
-      bin: oc
-    - tar: "openshift-install-linux-{{ ocp_version }}.tar.gz"
-      bin: openshift-install
-  tags:
-    - packages
-
-- name: extract mirror-registry
-  ansible.builtin.unarchive:
-    src: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/mirror-registry.tar.gz"
-    dest: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/mirror-registry"
-  tags:
-    - packages
-  when: install_registry is true
-
-- name: ensure execution permissions
-  ansible.builtin.file:
-    state: file
-    mode: 0755
-    name: "{{ lookup('ansible.builtin.env', 'HOME') }}/.local/bin/{{ item }}"
-  loop:
-    - kubectl
-    - oc-mirror
-    - openshift-install
-    - oc
-  tags:
-    - packages
+- name: include package download and configuration
+  ansible.builtin.import_tasks: create_packages.yaml
 
 - name: include tasks for operatorversions (rh index)
   ansible.builtin.import_tasks: create_operator_versions.yaml
@@ -105,3 +34,7 @@
     src: ./templates/imagesetconfiguration.yaml.j2
     dest: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/mirror-registry/imagesetconfiguration.yaml"
     mode: 0644
+
+- name: mirror to local disk
+  ansible.builtin.command:
+    cmd: oc-mirror --config "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/mirror-registry/imagesetconfiguration.yaml" "file://{{ mirror_data_dir }}"
