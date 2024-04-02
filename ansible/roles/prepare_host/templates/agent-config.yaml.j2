@@ -1,0 +1,34 @@
+apiVersion: v1beta1
+kind: AgentConfig
+metadata:
+  name: {{ ocp_cluster_name }}
+rendezvousIP: {{ ocp_machines[0].ip }}
+hosts:
+{% for node in ocp_machines %}
+  - hostname: {{ node.name }}
+    interfaces:
+      - name: eno1
+        macAddress: {{ node.mac }}
+    networkConfig:
+      interfaces:
+        - name: eno1
+          type: ethernet
+          state: up
+          mac-address: {{ node.mac }}
+          ipv4:
+            enabled: true
+            address:
+              - ip: {{ node.ip }}
+                prefix-length: {{ ocp_machine_network | split('/')[1] }}
+            dhcp: false
+      dns-resolver:
+        config:
+          server:
+            - {{ ocp_dns_server }}
+      routes:
+        config:
+          - destination: 0.0.0.0/0
+            next-hop-address: {{ ocp_machine_network_default_gw}}
+            next-hop-interface: eno1
+            table-id: 254
+{% endfor %}}

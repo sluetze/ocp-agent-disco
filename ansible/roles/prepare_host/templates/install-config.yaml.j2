@@ -1,0 +1,35 @@
+apiVersion: v1
+baseDomain: {{ ocp_base_domain }}
+compute:
+- architecture: amd64
+  hyperthreading: Enabled
+  name: worker
+  replicas: {{ ocp_worker_hosts }}
+controlPlane:
+  architecture: amd64
+  hyperthreading: Enabled
+  name: master
+  replicas: {{ ocp_control_hosts }}
+metadata:
+  name: {{ ocp_cluster_name }}
+networking:
+  clusterNetwork:
+  - cidr: {{ ocp_cluster_network }}
+    hostPrefix: {{ ocp_host_prefix }}
+  machineNetwork:
+  - cidr: {{ ocp_machine_network }}
+  networkType: OVNKubernetes
+  serviceNetwork:
+    - {{ ocp_service_network }}
+platform:
+  baremetal:
+    apiVIPs:
+      - {{ ocp_api_vip }}
+    ingressVIPs:
+      - {{ ocp_ingress_vip }}
+pullSecret: {{ ocp_pull_secret }}
+sshKey: {{ ocp_ssh_pub }}
+
+# imagecontentsources
+# additionalCAs
+#
