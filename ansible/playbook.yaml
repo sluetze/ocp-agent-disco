@@ -4,4 +4,6 @@
     - role: prepare_host
 
 
-# REQUIRES ansible-galaxy collection install community.general
+# REQUIRES
+# ansible-galaxy collection install community.general
+# ansible-galaxy collection install community.crypto
