@@ -21,6 +21,8 @@
     - never
     - debug
 
+# we might be able to skip this, since
+# By default, for each Operator in the catalog, oc-mirror includes the latest Operator version (channel head) from the default channel. If you want to mirror all Operator versions, and not just the channel heads, you must set the mirror.operators.full field to true.
 - name: get latest versions for each operator
   ansible.builtin.command:
     cmd: oc-mirror list operators --catalog={{ operator_catalog }}:v{{ ocp_version[:4] }} --package={{ item.name }} --channel={{ item.channel }}
