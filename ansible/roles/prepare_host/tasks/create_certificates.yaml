@@ -1,0 +1,56 @@
+- name: Create private key for rootCA
+  community.crypto.openssl_privatekey:
+    path: "{{ mirror_registry_cert_dir }}/rootCA.key"
+
+- name: Create certificate signing request (CSR) for CA certificate
+  community.crypto.openssl_csr_pipe:
+    privatekey_path: "{{ mirror_registry_cert_dir }}/rootCA.key"
+    privatekey_passphrase: "{{ mirror_registry_rootca_pass }}"
+    common_name: Mirror Registry CA
+    use_common_name_for_san: false
+    basic_constraints:
+      - 'CA:TRUE'
+    basic_constraints_critical: true
+    key_usage:
+      - keyCertSign
+    key_usage_critical: true
+  register: ca_csr
+
+- name: Ensure self-signed CA certificate from CSR
+  community.crypto.x509_certificate:
+    path: "{{ mirror_registry_cert_dir }}/rootCA.pem"
+    csr_content: "{{ ca_csr.csr }}"
+    privatekey_path:  "{{ mirror_registry_cert_dir }}/rootCA.key"
+    privatekey_passphrase: "{{ mirror_registry_rootca_pass }}"
+    provider: selfsigned
+
+- name: Ensure private key for mirror registry
+  community.crypto.openssl_privatekey:
+    path: "{{ mirror_registry_cert_dir }}/certificate.key"
+  register: cert_out
+
+- name: Ensure certificate signing request (CSR) for self-signed certificate
+  community.crypto.openssl_csr_pipe:
+    privatekey_path: "{{ mirror_registry_cert_dir }}/certificate.key"
+    common_name: {{ mirror_registry_hostname }}
+    organization_name: Red Hat Inc.
+    subject_alt_name:
+      - "DNS:{{ mirror_registry_hostname }}"
+  register: csr
+  when: cert_out.changed is true
+
+- name: Sign certificate with our CA
+  community.crypto.x509_certificate_pipe:
+    csr_content: "{{ csr.csr }}"
+    path: "{{ mirror_registry_cert_dir }}/certificate.pem"
+    provider: ownca
+    ownca_path: "{{ mirror_registry_cert_dir }}/rootCA.pem"
+    ownca_privatekey_path: "{{ mirror_registry_cert_dir }}/rootCA.key"
+    ownca_privatekey_passphrase: "{{ mirror_registry_rootca_pass }}"
+    ownca_not_after: +365d  # valid for one year
+    ownca_not_before: "-1d"  # valid since yesterday
+  when: cert_out.changed is true
+
+- name: load certificate to fact
+  ansible.builtin.set_fact:
+    mirror_registry_cert_pub: "{{ lookup('ansible.builtin.file', mirror_registry_cert_dir + '/rootCA.pem') }}"
