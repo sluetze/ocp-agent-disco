@@ -2,7 +2,7 @@ apiVersion: v1beta1
 kind: AgentConfig
 metadata:
   name: {{ ocp_cluster_name }}
-rendezvousIP: {{ ocp_machines[0].ip }}
+rendezvousIP: {{ ocp_rendezvousIP}}
 hosts:
 {% for node in ocp_machines %}
   - hostname: {{ node.name }}
@@ -19,7 +19,7 @@ hosts:
             enabled: true
             address:
               - ip: {{ node.ip }}
-                prefix-length: {{ ocp_machine_network | split('/')[1] }}
+                prefix-length: {{ ocp_machine_network.split('/')[-1] }}
             dhcp: false
       dns-resolver:
         config:
@@ -28,7 +28,7 @@ hosts:
       routes:
         config:
           - destination: 0.0.0.0/0
-            next-hop-address: {{ ocp_machine_network_default_gw}}
+            next-hop-address: {{ ocp_machine_network_default_gw }}
             next-hop-interface: eno1
             table-id: 254
-{% endfor %}}
+{% endfor %}

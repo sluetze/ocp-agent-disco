@@ -14,6 +14,8 @@ ocp_machine_network_default_gw: '192.168.0.1'
 ocp_service_network: '172.30.0.0/16'
 ocp_api_vip: '192.168.0.100'
 ocp_ingress_vip: '192.168.0.200'
+# set to first of the machines
+ocp_rendezvousIP: 192.168.1.11
 ocp_machines:
   - name: node1
     mac: 00:ef:44:21:e6:01
@@ -54,6 +56,7 @@ install_registry: false
 mirror_registry_hostname: "registry.{{ ocp_base_domain }}"
 mirror_registry_user: init
 mirror_registry_password: "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_lowercase', 'digits'], length=32) }}"
+mirror_registry_rootca_pass: "{{ lookup('ansible.builtin.password', lookup('ansible.builtin.env', 'HOME') + '/ocp_tools/configs/rootca_pass', chars=['ascii_lowercase', 'digits'], length=32) }}"
 
 mirror_registry_version: 1.3.10
 
@@ -61,6 +64,9 @@ mirror_registry_version: 1.3.10
 mirror_registry_data_dir: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/mirror-registry/data"
 mirror_registry_data_group: "{{ lookup('ansible.builtin.env', 'USER') }}"
 mirror_registry_data_user: "{{ lookup('ansible.builtin.env', 'USER') }}"
+
+# this dir is where the certificates are saved (rootCA and certificate)
+mirror_registry_cert_dir: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/mirror-registry/"
 
 rh_operators:
   # can be inprecise, we grep for this names in the operator list
