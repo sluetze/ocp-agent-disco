@@ -4,7 +4,7 @@ compute:
 - architecture: amd64
   hyperthreading: Enabled
   name: worker
-  replicas: {{ ocp_worker_hosts }}
+  replicas: {{ ocp_compute_hosts }}
 controlPlane:
   architecture: amd64
   hyperthreading: Enabled
@@ -27,9 +27,14 @@ platform:
       - {{ ocp_api_vip }}
     ingressVIPs:
       - {{ ocp_ingress_vip }}
-pullSecret: {{ ocp_pull_secret }}
+pullSecret: {{ ocp_pull_secret | to_json }}
 sshKey: {{ ocp_ssh_pub }}
+imageContentSources:
+{% for icsp in oc_mirror_imagecontentset %}
+{{ icsp.spec.repositoryDigestMirrors | to_yaml | indent(2, true) }}
+{% endfor %}
 
-# imagecontentsources
-# additionalCAs
-#
+{% if mirror_registry_cert_pub is defined and mirror_registry_cert_pub | length > 0 %}
+additionalTrustBundle: |
+{{ mirror_registry_cert_pub | indent(2, true) }}
+{% endif %}
