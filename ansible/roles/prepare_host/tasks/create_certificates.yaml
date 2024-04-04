@@ -1,6 +1,8 @@
 - name: Create private key for rootCA
   community.crypto.openssl_privatekey:
     path: "{{ mirror_registry_cert_dir }}/rootCA.key"
+    passphrase: "{{ mirror_registry_rootca_pass }}"
+    cipher: auto
 
 - name: Create certificate signing request (CSR) for CA certificate
   community.crypto.openssl_csr_pipe:
@@ -24,6 +26,15 @@
     privatekey_passphrase: "{{ mirror_registry_rootca_pass }}"
     provider: selfsigned
 
+- name: ensure ca is in anchors folder
+  ansible.builtin.copy:
+    src: "{{ mirror_registry_cert_dir }}/rootCA.pem"
+    dest: "/etc/pki/ca-trust/source/anchors/mirror-reg.pem"
+    remote_src: true
+  become: true
+  register: ca_copy
+  notify: Update CA Trust
+
 - name: Ensure private key for mirror registry
   community.crypto.openssl_privatekey:
     path: "{{ mirror_registry_cert_dir }}/certificate.key"
@@ -32,7 +43,7 @@
 - name: Ensure certificate signing request (CSR) for self-signed certificate
   community.crypto.openssl_csr_pipe:
     privatekey_path: "{{ mirror_registry_cert_dir }}/certificate.key"
-    common_name: {{ mirror_registry_hostname }}
+    common_name: "{{ mirror_registry_hostname }}"
     organization_name: Red Hat Inc.
     subject_alt_name:
       - "DNS:{{ mirror_registry_hostname }}"
@@ -40,7 +51,7 @@
   when: cert_out.changed is true
 
 - name: Sign certificate with our CA
-  community.crypto.x509_certificate_pipe:
+  community.crypto.x509_certificate:
     csr_content: "{{ csr.csr }}"
     path: "{{ mirror_registry_cert_dir }}/certificate.pem"
     provider: ownca
