@@ -1,0 +1,44 @@
+# the following tasks are only done to create the ICSP File
+# it might be useful to make this an async task
+- name: mirror to local disk
+  ansible.builtin.command:
+    cmd: oc-mirror --config "{{ config_path }}/imagesetconfiguration.yaml" "file://{{ mirror_data_dir }}"
+    creates: "{{ mirror_data_dir }}/mirror_seq1_000000.tar"
+  register: mirror_result
+  tags:
+   - mirror
+
+- name: create manifests
+  ansible.builtin.command:
+    cmd: oc-mirror --from={{ mirror_data_dir }}/mirror_seq1_000000.tar --manifests-only docker://{{ mirror_registry_hostname }}
+    chdir: /tmp
+    creates: oc-mirror-workspace
+  register: manifests_out
+  when: mirror_result.changed is true
+  tags:
+    - mirror
+    - manifests
+
+- name: register folder fact
+  ansible.builtin.set_fact:
+    oc_mirror_manifest_icsp: "/tmp/{{ manifests_out.stdout_lines | regex_search('oc-mirror-workspace/results-[0-9]{10}') }}/imageContentSourcePolicy.yaml"
+  when: manifests_out.changed is true
+  tags:
+    - mirror
+    - manifests
+
+- name: load imagecontentset
+  ansible.builtin.set_fact:
+    oc_mirror_imagecontentset: "{{ lookup('ansible.builtin.file', oc_mirror_manifest_icsp ) | from_yaml_all  }}"
+  when: manifests_out.changed is true
+  tags:
+    - mirror
+    - manifests
+
+- name: debug imagecontentset
+  ansible.builtin.debug:
+    var: oc_mirror_imagecontentset
+  tags:
+    - mirror
+    - manifests
+    - never
