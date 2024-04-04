@@ -1,26 +1,21 @@
-
 - name: Generate an OpenSSH keypair
   community.crypto.openssh_keypair:
-    path: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/configs/id_ed25519"
+    path: "{{ config_path }}/id_ed25519"
     type: ed25519
   when: ocp_ssh_pub is undefined or
         ocp_ssh_pub == None or
         ocp_ssh_pub| length == 0
-  tags:
-    - ssh_keypair
 
 - name: load ssh pub_key to fact
   ansible.builtin.set_fact:
-    ocp_ssh_pub: "{{ lookup('ansible.builtin.file', lookup('ansible.builtin.env', 'HOME') + '/ocp_tools/configs/id_ed25519.pub' ) }}"
+    ocp_ssh_pub: "{{ config_path }}/id_ed25519.pub' ) }}"
   when: ocp_ssh_pub is undefined or
       ocp_ssh_pub == None or
       ocp_ssh_pub| length == 0
-  tags:
-    - ssh_keypair
 
 - name: debug pubkey
   ansible.builtin.debug:
     var: ocp_ssh_pub
   tags:
     - never
-    - ssh_keypair
+    - debug

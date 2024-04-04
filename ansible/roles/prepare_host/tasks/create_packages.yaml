@@ -19,10 +19,10 @@
     - "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools"
     - "{{ lookup('ansible.builtin.env', 'HOME') }}/.local/bin"
     - "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/mirror-registry"
-    - "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/configs"
     - "{{ mirror_registry_data_dir }}"
     - "{{ mirror_registry_cert_dir }}"
     - "{{ mirror_data_dir }}"
+    - "{{ config_path }}"
   tags:
     - packages
 
