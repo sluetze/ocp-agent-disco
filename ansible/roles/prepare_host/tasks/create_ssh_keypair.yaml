@@ -8,7 +8,7 @@
 
 - name: load ssh pub_key to fact
   ansible.builtin.set_fact:
-    ocp_ssh_pub: "{{ config_path }}/id_ed25519.pub' ) }}"
+    ocp_ssh_pub: "{{ lookup('ansible.builtin.file', config_path + '/id_ed25519.pub' ) }}"
   when: ocp_ssh_pub is undefined or
       ocp_ssh_pub == None or
       ocp_ssh_pub| length == 0
