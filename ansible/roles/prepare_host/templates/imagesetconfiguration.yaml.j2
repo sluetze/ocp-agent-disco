@@ -38,7 +38,7 @@ mirror:
 {% endfor %}
 {% endif %}
 
-{% if additional_images is defined and rh_operator_packages | length > 0 %}
+{% if additional_images is defined and additional_images | length > 0 %}
   additionalImages:
 {% for image in additional_images %}
     - name: {{ image }}

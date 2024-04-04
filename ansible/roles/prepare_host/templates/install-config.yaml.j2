@@ -27,12 +27,14 @@ platform:
       - {{ ocp_api_vip }}
     ingressVIPs:
       - {{ ocp_ingress_vip }}
-pullSecret: {{ ocp_pull_secret | to_json }}
+pullSecret: {{ ocp_pull_secret }}
 sshKey: {{ ocp_ssh_pub }}
+{% if oc_mirror_imagecontentset is defined and oc_mirror_imagecontentset | length > 0 %}
 imageContentSources:
 {% for icsp in oc_mirror_imagecontentset %}
 {{ icsp.spec.repositoryDigestMirrors | to_yaml | indent(2, true) }}
 {% endfor %}
+{% endif %}
 
 {% if mirror_registry_cert_pub is defined and mirror_registry_cert_pub | length > 0 %}
 additionalTrustBundle: |

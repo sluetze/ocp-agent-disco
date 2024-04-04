@@ -2,7 +2,7 @@ apiVersion: v1beta1
 kind: AgentConfig
 metadata:
   name: {{ ocp_cluster_name }}
-rendezvousIP: {{ ocp_rendezvousIP}}
+rendezvousIP: {{ ocp_rendezvous_ip}}
 hosts:
 {% for node in ocp_machines %}
   - hostname: {{ node.name }}
