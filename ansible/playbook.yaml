@@ -1,5 +1,6 @@
 - name: playbook
   hosts: localhost
+  gather_facts: false
   roles:
     - role: prepare_host
 
