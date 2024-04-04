@@ -1,6 +1,8 @@
 ---
 - name: include package download and configuration
   ansible.builtin.import_tasks: create_packages.yaml
+  tags:
+    - packages
 
 - name: include tasks for operatorversions (rh index)
   ansible.builtin.import_tasks: create_operator_versions.yaml
@@ -10,10 +12,16 @@
   run_once: false
   when: ( rh_operators is defined ) and
         ( rh_operators | length > 0 )
+  tags:
+    - isc
 
 - name: set operatorversions (rh index)
   ansible.builtin.set_fact:
     rh_operator_packages: "{{ operator_versions }}"
+  when: ( rh_operators is defined ) and
+        ( rh_operators | length > 0 )
+  tags:
+    - isc
 
 - name: include tasks for operatorversions (certified index)
   ansible.builtin.import_tasks: create_operator_versions.yaml
@@ -22,59 +30,29 @@
     operators: "{{ certified_operators }}"
   when: ( certified_operators is defined ) and
         ( certified_operators | length > 0 )
+  tags:
+    - isc
 
 - name: set operatorversions (certified index)
   ansible.builtin.set_fact:
     certified_operator_packages: "{{ operator_versions }}"
   when: ( certified_operators is defined ) and
         ( certified_operators | length > 0 )
+  tags:
+    - isc
 
 - name: generate ImageSetConfiguration
   ansible.builtin.template:
     src: ./templates/imagesetconfiguration.yaml.j2
-    dest: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/configs/imagesetconfiguration.yaml"
+    dest: "{{ config_path }}/imagesetconfiguration.yaml"
     mode: 0644
-
-# it might be useful to make this an async task
-- name: mirror to local disk
-  ansible.builtin.command:
-    cmd: oc-mirror --config "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/configs/imagesetconfiguration.yaml" "file://{{ mirror_data_dir }}"
-    creates: "{{ mirror_data_dir }}/mirror_seq1_000000.tar"
-  register: mirror_result
   tags:
-   - mirror
+    - isc
 
-- name: create manifests
-  ansible.builtin.command:
-    cmd: oc-mirror --from={{ mirror_data_dir }}/mirror_seq1_000000.tar --manifests-only docker://{{ mirror_registry_hostname }}
-    chdir: /tmp
-    creates: oc-mirror-workspace
-  register: manifests_out
+- name: include tasks for icsp creation
+  ansible.builtin.include_tasks: create_icsp.yaml
   tags:
-    - mirror
-    - manifests
-
-- name: register folder fact
-  ansible.builtin.set_fact:
-    oc_mirror_manifest_icsp: "/tmp/{{ manifests_out.stdout_lines | regex_search('oc-mirror-workspace/results-[0-9]{10}') }}/imageContentSourcePolicy.yaml"
-  tags:
-    - mirror
-    - manifests
-
-- name: load imagecontentset
-  ansible.builtin.set_fact:
-    oc_mirror_imagecontentset: "{{ lookup('ansible.builtin.file', oc_mirror_manifest_icsp ) | from_yaml_all  }}"
-  tags:
-    - mirror
-    - manifests
-
-- name: debug imagecontentset
-  ansible.builtin.debug:
-    var: oc_mirror_imagecontentset
-  tags:
-    - mirror
-    - manifests
-    - never
+    - icsp
 
 - name: include tasks for ssh keypair
   ansible.builtin.import_tasks: create_ssh_keypair.yaml
@@ -84,10 +62,21 @@
   tags:
     - ssh_keypair
 
+- name: include tasks for certificate generation
+  ansible.builtin.import_tasks: create_certificates.yaml
+  tags:
+    - mirror_registry
+    - certificates
+
+- name: include tasks for pullsecret generation
+  ansible.builtin.import_tasks: create_disco_pull_secret.yaml
+  tags:
+    - disco_pull_secret
+
 - name: generate install-config
   ansible.builtin.template:
     src: ./templates/install-config.yaml.j2
-    dest: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/configs/install-config.yaml"
+    dest: "{{ config_path }}/install-config.yaml"
     mode: 0600
   tags:
     - install_configs
@@ -95,7 +84,7 @@
 - name: generate agent-config
   ansible.builtin.template:
     src: ./templates/agent-config.yaml.j2
-    dest: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/configs/agent-config.yaml"
+    dest: "{{ config_path }}/agent-config.yaml"
     mode: 0600
   tags:
     - install_configs
