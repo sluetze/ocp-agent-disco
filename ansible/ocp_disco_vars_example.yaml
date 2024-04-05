@@ -1,0 +1,30 @@
+rh_operators:
+  # can be inprecise, we grep for this names in the operator list
+  # small useful operators
+  - web-terminal
+  - serverless
+
+ocp_version: 4.14.17
+ocp_channel: stable
+ocp_base_domain: holymoly.lan
+ocp_cluster_name: ocp4
+ocp_compute_hosts: 0
+ocp_control_hosts: 3
+ocp_rh_pull_secret: 'replaceme'
+
+# Networks
+ocp_machine_network: '192.168.0.0/24' # network which is physically connected to the nodes / Admin network
+ocp_machine_network_default_gw: "{{ ocp_machine_network.split('.')[:3] | join('.') }}.1"
+
+ocp_machines:
+  - name: node1
+    mac: 00:ef:44:21:e6:01
+    ip: "{{ ocp_machine_network.split('.')[:3] | join('.') }}.11"
+  - name: node2
+    mac: 00:ef:44:21:e6:02
+    ip: "{{ ocp_machine_network.split('.')[:3] | join('.') }}.12"
+  - name: node3
+    mac: 00:ef:44:21:e6:03
+    ip: "{{ ocp_machine_network.split('.')[:3] | join('.') }}.13"
+
+ocp_dns_server: 192.168.111.1
