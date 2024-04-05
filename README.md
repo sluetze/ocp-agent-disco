@@ -11,3 +11,10 @@ By executing the playbook you will get:
 1. A ready to use imagesetconfiguration
 2. a ready to use agent-config and install-config
 3. a offline mirror tar with the images for transport
+
+# HowTo
+1. install requirements with `ansible-galaxy install -r requirements.yaml`
+1. Define your variables for the environment in `ocp_disco_vars.yaml`. There is an example file `ocp_disco_vars_example.yaml` which you can use as a starting point. There are some assumptions about the machine network being a /24 network in defaults, so you might have to change more network related defaults.
+2. if you do not set `ocp_rh_pull_secret` with your red hat [pull secret](https://console.redhat.com/openshift/downloads#tool-pull-secret), please login before executing the playbook. Otherwise it fails.
+3. run playbook with `ansible-playbook ansible/playbook.yaml`
+4. obtain everything you need in $HOME/ocp_tools folder (default)
