@@ -27,7 +27,7 @@ platform:
       - {{ ocp_api_vip }}
     ingressVIPs:
       - {{ ocp_ingress_vip }}
-pullSecret: '{{ ocp_pull_secret }}'
+pullSecret: '{{ ocp_pull_secret | to_json }}'
 sshKey: {{ ocp_ssh_pub }}
 
 {% if oc_mirror_imagecontentset is defined and oc_mirror_imagecontentset | length > 0 %}
