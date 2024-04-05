@@ -1,4 +1,10 @@
 ---
+- name: login to red hat registry
+  ansible.builtin.copy:
+    content: "{{ ocp_rh_pull_secret }}"
+    dest: "${XDG_RUNTIME_DIR}/containers/auth.json"
+  when: ocp_rh_pull_secret != "replaceme"
+
 - name: include package download and configuration
   ansible.builtin.import_tasks: create_packages.yaml
   tags:
