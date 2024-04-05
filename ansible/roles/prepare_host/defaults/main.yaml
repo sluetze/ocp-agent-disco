@@ -8,44 +8,48 @@ ocp_control_hosts: 3
 # Networks
 ocp_cluster_network: '10.128.0.0/14' # internal network for the cluster pods
 ocp_host_prefix: '23'
-ocp_machine_network: '192.168.0.0/16' # network which is physically connected to the nodes / Admin network
-ocp_machine_network_default_gw: '192.168.0.1'
+ocp_machine_network: '192.168.0.0/24' # network which is physically connected to the nodes / Admin network
+ocp_machine_network_default_gw: "{{ ocp_machine_network.split('.')[:3] | join('.') }}.1"
 
 ocp_service_network: '172.30.0.0/16'
-ocp_api_vip: '192.168.0.100'
-ocp_ingress_vip: '192.168.0.200'
+ocp_api_vip: "{{ ocp_machine_network.split('.')[:3] | join('.') }}.100"
+ocp_ingress_vip: "{{ ocp_machine_network.split('.')[:3] | join('.') }}.200"
+
 # set to first of the machines
-ocp_rendezvous_ip: 192.168.1.11
+ocp_rendezvous_ip: "{{ ocp_machine_network.split('.')[:3] | join('.') }}.11"
 ocp_machines:
   - name: node1
     mac: 00:ef:44:21:e6:01
-    ip: 192.168.1.11
+    ip: "{{ ocp_machine_network.split('.')[:3] | join('.') }}.11"
   - name: node2
     mac: 00:ef:44:21:e6:02
-    ip: 192.168.1.12
+    ip: "{{ ocp_machine_network.split('.')[:3] | join('.') }}.12"
   - name: node3
     mac: 00:ef:44:21:e6:03
-    ip: 192.168.1.13
+    ip: "{{ ocp_machine_network.split('.')[:3] | join('.') }}.13"
   - name: node4
     mac: 00:ef:44:21:e6:04
-    ip: 192.168.1.14
+    ip: "{{ ocp_machine_network.split('.')[:3] | join('.') }}.14"
   - name: node5
     mac: 00:ef:44:21:e6:05
-    ip: 192.168.1.15
+    ip: "{{ ocp_machine_network.split('.')[:3] | join('.') }}.15"
   - name: node6
     mac: 00:ef:44:21:e6:06
-    ip: 192.168.1.16
+    ip: "{{ ocp_machine_network.split('.')[:3] | join('.') }}.16"
+
 ocp_dns_server: 192.168.111.1
 
 
 # secrets
 ocp_pull_secret: 'replaceme'
+ocp_rh_pull_secret: 'replcaeme'
 # define, if you do not want to autogenerate keys, null will generate them
 ocp_ssh_pub: null
 
-config_path: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/configs/"
+config_path: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/configs"
 
 # mirror_mode defines, if you mirror to disk (file) or into the created mirror_registry (registry)
+# currently only file is supported
 mirror_mode: file
 
 # this dir is for the offline packages
