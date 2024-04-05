@@ -42,7 +42,7 @@ ocp_dns_server: 192.168.111.1
 
 # secrets
 ocp_pull_secret: 'replaceme'
-ocp_rh_pull_secret: 'replcaeme'
+ocp_rh_pull_secret: 'replaceme'
 # define, if you do not want to autogenerate keys, null will generate them
 ocp_ssh_pub: null
 
