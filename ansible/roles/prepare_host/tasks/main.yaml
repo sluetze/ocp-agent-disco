@@ -94,3 +94,11 @@
     mode: 0600
   tags:
     - install_configs
+
+- name: generate remote commands
+  ansible.builtin.template:
+    src: ./templates/commands.txt.j2
+    dest: "{{ config_path }}/commands.txt"
+    mode: 0600
+  tags:
+    - install_configs

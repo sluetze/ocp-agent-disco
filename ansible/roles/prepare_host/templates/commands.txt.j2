@@ -1,0 +1,14 @@
+# on connected environment
+oc-mirror --config {{ config_path }}/imagesetconfiguration.yaml file://{{ mirror_data_dir }}
+
+#### TRANSFER DATA TO DISCONNECTED ENVIRONMENT ####
+scp {{ config_path }} {{my_remote_user}}@{{ my_remote_host }}:{{ config_path }}
+scp {{ mirror_data_dir }} {{my_remote_user}}@{{ my_remote_host }}:{{ config_path }}
+
+# on disconnected environment
+# of registry shall be installed
+mirror-registry install --quayHostname {{ mirror_registry_hostname }} --quayRoot {{ mirror_registry_data_dir }}/config --initUser {{ mirror_registry_user }} --initPassword {{ mirror_registry_password }} --sslKey {{ mirror_registry_cert_dir }}/certificate.key --sslCert {{ mirror_registry_cert_dir }}/certificate.pem
+
+# install cmds
+openshift-install agent create cluster-manifests --dir {{ config_path}}
+openshift-install agent create image --dir {{ config_path}}

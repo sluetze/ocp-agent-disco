@@ -2,7 +2,42 @@ rh_operators:
   # can be inprecise, we grep for this names in the operator list
   # small useful operators
   - web-terminal
+  # storage operators
+  - lvms-operator
+
+  # ocp parts
+  - openshift-gitops-operator
+  - devspaces
   - serverless
+  - cincinnati-operator
+  - devworkspace-operator
+  - openshift-pipelines-operator-rh
+  - compliance-operator
+  - file-integrity-operator
+  - openshift-cert-manager-operator
+  - security-profiles-operator
+
+  # layered products
+  # data science
+  - rhods-operator
+  # quay
+  - quay-operator
+  - quay-bridge-operator
+  - container-security-operator
+  # acm
+  - advanced-cluster-management
+  - gatekeeper-operator-product
+  - multicluster-engine
+  # acs
+  - rhacs-operator
+  # odf
+  - ocs-client-operator
+  - ocs-operator
+  - odf-csi-addons-operator
+  - odf-multicluster-orchestrator
+  - odf-operator
+  - odr-cluster-operator
+  - odr-hub-operator
 
 ocp_version: 4.14.17
 ocp_channel: stable
