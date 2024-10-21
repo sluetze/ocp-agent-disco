@@ -1,4 +1,10 @@
 ---
+- name: ensure directory exists
+  ansible.builtin.file:
+    dest: "${XDG_RUNTIME_DIR}/containers/"
+    state: directory
+  when: ocp_rh_pull_secret != "replaceme"
+
 - name: login to red hat registry
   ansible.builtin.copy:
     content: "{{ ocp_rh_pull_secret }}"
