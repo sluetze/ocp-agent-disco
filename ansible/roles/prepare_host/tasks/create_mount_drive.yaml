@@ -1,26 +1,26 @@
-- name: Create {{ dir }}
+- name: "Create {{ dir }}"
   ansible.builtin.file:
-    path: {{ dir }}
+    path: "{{ dir }}"
     state: directory
     owner: root
     group: root
     mode: '0770'
 
-- name: Create an xfs filesystem on {{ device }}
+- name: "Create an xfs filesystem on {{ device }}"
   community.general.filesystem:
     fstype: xfs
     state: present
-    dev: {{ device }}
+    dev: "{{ device }}"
 
-- name: Fetch the UUID of {{ device }}
-  command: blkid -s UUID -o value {{ device }}
+- name: "Fetch the UUID of {{ device }}"
+  command: "blkid -s UUID -o value {{ device }}"
   changed_when: false
   register: blkid_out
 
-- name: Mount {{ device }} by UUID
+- name: "Mount {{ device }} by UUID"
   ansible.posix.mount:
-    path: {{ dir }}
-    src: UUID={{ blkid_out.stdout }}
+    path: "{{ dir }}"
+    src: "UUID={{ blkid_out.stdout }}"
     fstype: xfs
     opts: defaults
     state: mounted

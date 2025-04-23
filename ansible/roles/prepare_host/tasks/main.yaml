@@ -39,8 +39,8 @@
 - name: include mirror_data_drive configuration
   ansible.builtin.import_tasks: create_mount_drive.yaml
   vars:
-    device: {{ mirror_data_drive }}
-    dir: {{ mirror_data_dir }}
+    device: "{{ mirror_data_drive }}"
+    dir: "{{ mirror_data_dir }}"
   tags:
     - mirror
   when: mode == file
@@ -49,8 +49,8 @@
 - name: include mirror_registry_drive configuration
   ansible.builtin.import_tasks: create_mount_drive.yaml
   vars:
-    device: {{ mirror_registry_data_drive }}
-    dir: {{ mirror_registry_data_dir }}
+    device: "{{ mirror_registry_data_drive }}"
+    dir: "{{ mirror_registry_data_dir }}"
   tags:
     - mirror
   when: mode != live

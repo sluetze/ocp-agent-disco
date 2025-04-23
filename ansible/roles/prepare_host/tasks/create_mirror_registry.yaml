@@ -1,3 +1,3 @@
 - name: install mirror-registry
   ansible.builtin.shell:
-    command: mirror-registry install --quayHostname {{ mirror_registry_hostname }} --quayRoot {{ mirror_registry_data_dir }}/config --initUser {{ mirror_registry_user }} --initPassword {{ mirror_registry_password }} --sslKey {{ mirror_registry_cert_dir }}/certificate.key --sslCert {{ mirror_registry_cert_dir }}/certificate.pem
+    command: "mirror-registry install --quayHostname {{ mirror_registry_hostname }} --quayRoot {{ mirror_registry_data_dir }}/config --initUser {{ mirror_registry_user }} --initPassword {{ mirror_registry_password }} --sslKey {{ mirror_registry_cert_dir }}/certificate.key --sslCert {{ mirror_registry_cert_dir }}/certificate.pem"
