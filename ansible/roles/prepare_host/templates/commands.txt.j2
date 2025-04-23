@@ -1,5 +1,5 @@
-# on connected environment
-oc-mirror --config {{ config_path }}/imagesetconfiguration.yaml file://{{ mirror_data_dir }}
+# mirror to mirror
+oc-mirror --workspace file://{{ mirror_data_dir }} --config {{ config_path }}/imagesetconfiguration.yaml docker://{{ mirror_registry_hostname }} --v2
 
 # Transfer TOOLS TO DISCONNECTED ENVIRONMENT ####
 scp ~/.local/bin/* {{my_remote_user}}@{{ my_remote_host }}:~/.local/bin/.
@@ -12,13 +12,13 @@ scp {{ mirror_data_dir }} {{my_remote_user}}@{{ my_remote_host }}:{{ config_path
 # copy data ~/ocp_tools
 # untar mirror-registry
 tar -xzf
-# of registry shall be installed
-mirror-registry install --quayHostname {{ mirror_registry_hostname }} --quayRoot {{ mirror_registry_data_dir }}/config --initUser {{ mirror_registry_user }} --initPassword {{ mirror_registry_password }} --sslKey {{ mirror_registry_cert_dir }}/certificate.key --sslCert {{ mirror_registry_cert_dir }}/certificate.pem
+# if registry shall be installed
+mirror-registry install --quayHostname {{ mirror_registry_hostname }} --quayRoot {{ mirror_registry_data_dir }}/config --quayStorage {{ mirror_registry_data_dir }}/data --initUser {{ mirror_registry_user }} --initPassword {{ mirror_registry_password }} --sslKey {{ mirror_registry_cert_dir }}/certificate.key --sslCert {{ mirror_registry_cert_dir }}/certificate.pem"
 
 # cp configs/id_ed25519 ~/.ssh/.
 
-# mirror to registry
-oc-mirror --config {{ config_path }}/imagesetconfiguration.yaml docker://{{ mirror_registry_hostname }}
+# file to registry
+oc-mirror --config {{ config_path }}/imagesetconfiguration.yaml --from file://{{ mirror_data_dir }} docker://{{ mirror_registry_hostname }} --v2
 
 # install cmds
 openshift-install agent create cluster-manifests --dir {{ config_path}}
