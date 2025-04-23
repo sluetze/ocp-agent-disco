@@ -13,17 +13,17 @@
   loop: "{{ ocp_machines }}"
   notify: Restart dnsmasq
 
-- name: ensure registry dns entry
+- name: ensure registry and vip dns entries
   ansible.builtin.lineinfile:
     path: /etc/dnsmasq.d/dnsmasq-ocp.conf
-    line: "address=/{{ mirror_registry_hostname }}/{{ mirror_registry_ip }}"
+    line: "address=/{{ item.name }}/{{ item.ip }}"
     create: true
     state: present
   loop:
     - name: '{{ mirror_registry_hostname }}'
       ip: '{{ mirror_registry_ip }}'
-    - name: api.{{ ocp_cluster_name }}.{{ ocp_base_domain }}
+    - name: 'api.{{ ocp_cluster_name }}.{{ ocp_base_domain }}'
       ip: '{{ ocp_api_vip }}'
-    - name: .apps.{{ ocp_cluster_name }}.{{ ocp_base_domain }}
-      ip: {{ ocp_ingress_vip }}
+    - name: '.apps.{{ ocp_cluster_name }}.{{ ocp_base_domain }}'
+      ip: '{{ ocp_ingress_vip }}'
   notify: Restart dnsmasq
