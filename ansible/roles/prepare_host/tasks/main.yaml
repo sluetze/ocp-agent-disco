@@ -43,7 +43,7 @@
     dir: "{{ mirror_data_dir }}"
   tags:
     - mirror
-  when: mode == file
+  when: mirror_mode == file
 
 # if mode != file it will mount a drive to teh registry data dir
 - name: include mirror_registry_drive configuration
@@ -53,7 +53,7 @@
     dir: "{{ mirror_registry_data_dir }}"
   tags:
     - mirror
-  when: mode != live
+  when: mirror_mode != file
 
 # if install_registry= true, we install the registry on the EXECUTING NODE
 - name: include the install of mirror-registry
