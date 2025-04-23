@@ -3,6 +3,7 @@
     path: "{{ mirror_registry_cert_dir }}/rootCA.key"
     passphrase: "{{ mirror_registry_rootca_pass }}"
     cipher: auto
+  register: ca_out
 
 - name: Create certificate signing request (CSR) for CA certificate
   community.crypto.openssl_csr_pipe:
@@ -17,6 +18,7 @@
       - keyCertSign
     key_usage_critical: true
   register: ca_csr
+  when: ca_out.changed is true
 
 - name: Ensure self-signed CA certificate from CSR
   community.crypto.x509_certificate:
