@@ -2,3 +2,9 @@
   ansible.builtin.shell:
     cmd: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/mirror-registry/mirror-registry install --quayHostname {{ mirror_registry_hostname }}:8443 --quayRoot {{ mirror_registry_data_dir }}/config --quayStorage {{ mirror_registry_data_dir }}/data --initUser {{ mirror_registry_user }} --initPassword {{ mirror_registry_password }} --sslKey {{ mirror_registry_cert_dir }}/certificate.key --sslCert {{ mirror_registry_cert_dir }}/certificate.pem"
     creates: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/mirror-registry/data/config/quay-config/config.yaml"
+
+- name: login to registry
+  containers.podman.podman_login:
+    username: init
+    password: '{{ mirror_registry_password }}'
+    registry: '{{ mirror_registry_hostname }}:8443'
