@@ -1,5 +1,5 @@
 # mirror to mirror
-oc-mirror --workspace file://{{ mirror_data_dir }} --config {{ config_path }}/imagesetconfiguration.yaml docker://{{ mirror_registry_hostname }} --v2
+oc-mirror --workspace file:///{{ mirror_data_dir }} --config {{ config_path }}/imagesetconfiguration.yaml docker://{{ mirror_registry_hostname }} --v2
 
 # Transfer TOOLS TO DISCONNECTED ENVIRONMENT ####
 scp ~/.local/bin/* {{my_remote_user}}@{{ my_remote_host }}:~/.local/bin/.
@@ -18,7 +18,7 @@ mirror-registry install --quayHostname {{ mirror_registry_hostname }} --quayRoot
 # cp configs/id_ed25519 ~/.ssh/.
 
 # file to registry
-oc-mirror --config {{ config_path }}/imagesetconfiguration.yaml --from file://{{ mirror_data_dir }} docker://{{ mirror_registry_hostname }} --v2
+oc-mirror --config {{ config_path }}/imagesetconfiguration.yaml --from file:///{{ mirror_data_dir }} docker://{{ mirror_registry_hostname }} --v2
 
 # install cmds
 openshift-install agent create cluster-manifests --dir {{ config_path}}
