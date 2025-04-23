@@ -27,6 +27,7 @@
     privatekey_path:  "{{ mirror_registry_cert_dir }}/rootCA.key"
     privatekey_passphrase: "{{ mirror_registry_rootca_pass }}"
     provider: selfsigned
+  when: ca_out.changed is true
 
 - name: ensure ca is in anchors folder
   ansible.builtin.copy:
