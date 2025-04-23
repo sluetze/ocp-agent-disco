@@ -6,7 +6,6 @@
     mode: 0777
     state: present
   loop:
-    - "{{ mirror_registry_data_dir }}"
     - "{{ mirror_registry_data_dir }}/data"
   become: true
 
