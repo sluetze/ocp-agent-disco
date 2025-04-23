@@ -3,6 +3,7 @@
     name:
       - dnsmasq
     state: present
+  become: true
 
 - name: Ensure dnsmasq custom DNS entries for ocp nodes are present
   ansible.builtin.lineinfile:
@@ -12,6 +13,7 @@
     state: present
   loop: "{{ ocp_machines }}"
   notify: Restart dnsmasq
+  become: true
 
 - name: ensure registry and vip dns entries
   ansible.builtin.lineinfile:
@@ -27,3 +29,4 @@
     - name: '.apps.{{ ocp_cluster_name }}.{{ ocp_base_domain }}'
       ip: '{{ ocp_ingress_vip }}'
   notify: Restart dnsmasq
+  become: true
