@@ -30,3 +30,9 @@
       ip: '{{ ocp_ingress_vip }}'
   notify: Restart dnsmasq
   become: true
+
+- name: enable and start dnsmasq
+  ansible.builtin.service:
+    name: dnsmasq
+    state: started
+    enabled: true
