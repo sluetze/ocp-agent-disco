@@ -18,3 +18,7 @@ By executing the playbook you will get:
 2. if you do not set `ocp_rh_pull_secret` with your red hat [pull secret](https://console.redhat.com/openshift/downloads#tool-pull-secret), please login before executing the playbook. Otherwise it fails.
 3. run playbook with `ansible-playbook ansible/playbook.yaml` (--ask-become-pass)
 4. obtain everything you need in $HOME/ocp_tools folder (default)
+
+
+# TODO
+[] Enable RHEL8/RHEL9 download tool choice

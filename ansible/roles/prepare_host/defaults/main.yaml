@@ -54,6 +54,11 @@ config_path: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/configs"
 # currently only file is supported
 mirror_mode: file
 
+# mirror_v2 defines if oc-mirror is executed with the --v2 option.
+# this currently does not support all settings
+# to be fair it only covers HEAD mirroring of the full catalog
+mirror_v2: false
+
 # this dir is for the offline packages
 mirror_data_dir: /data/oc-mirror-data
 mirror_data_dir_owner: "{{ lookup('ansible.builtin.env', 'USER') }}"

@@ -53,16 +53,34 @@
   tags:
     - isc
 
-- name: generate ImageSetConfiguration
+- name: generate ImageSetConfiguration (v1)
   ansible.builtin.template:
     src: ./templates/imagesetconfiguration.yaml.j2
     dest: "{{ config_path }}/imagesetconfiguration.yaml"
     mode: 0644
+  when: mirror_v2 == false
   tags:
     - isc
 
-- name: include tasks for icsp creation
+
+- name: include tasks for icsp creation (v1)
   ansible.builtin.include_tasks: create_icsp.yaml
+  when: mirror_v2 == false
+  tags:
+    - icsp
+
+- name: generate ImageSetConfiguration (v2)
+  ansible.builtin.template:
+    src: ./templates/imagesetconfiguration-v2.yaml.j2
+    dest: "{{ config_path }}/imagesetconfiguration.yaml"
+    mode: 0644
+  when: mirror_v2 == true
+  tags:
+    - isc
+
+- name: include tasks for icsp creation (v1)
+  ansible.builtin.include_tasks: create_icsp.yaml
+  when: mirror_v2 == true
   tags:
     - icsp
 
