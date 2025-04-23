@@ -16,6 +16,52 @@
   tags:
     - packages
 
+- name: include tasks for ssh keypair
+  ansible.builtin.import_tasks: create_ssh_keypair.yaml
+  when: ocp_ssh_pub is undefined or
+        ocp_ssh_pub == None or
+        ocp_ssh_pub| length == 0
+  tags:
+    - ssh_keypair
+
+- name: include tasks for certificate generation
+  ansible.builtin.import_tasks: create_certificates.yaml
+  tags:
+    - mirror_registry
+    - certificates
+
+- name: include tasks for pullsecret generation
+  ansible.builtin.import_tasks: create_disco_pull_secret.yaml
+  tags:
+    - disco_pull_secret
+
+# if mode=file, it will mount the drive to the mirror data dir
+- name: include mirror_data_drive configuration
+  ansible.builtin.import_tasks: create_mount_drive.yaml
+  vars:
+    device: {{ mirror_data_drive }}
+    dir: {{ mirror_data_dir }}
+  tags:
+    - mirror
+  when: mode == file
+
+# if mode != file it will mount a drive to teh registry data dir
+- name: include mirror_registry_drive configuration
+  ansible.builtin.import_tasks: create_mount_drive.yaml
+  vars:
+    device: {{ mirror_registry_data_drive }}
+    dir: {{ mirror_registry_data_dir }}
+  tags:
+    - mirror
+  when: mode != live
+
+# if install_registry= true, we install the registry on the EXECUTING NODE
+- name: include the install of mirror-registry
+  ansible.builtin.import_tasks: create_mirror_registry.yaml
+  tags:
+    - mirror
+  when: install_registry == true
+
 - name: include tasks for operatorversions (rh index)
   ansible.builtin.import_tasks: create_operator_versions.yaml
   vars:
@@ -62,7 +108,6 @@
   tags:
     - isc
 
-
 - name: include tasks for icsp creation (v1)
   ansible.builtin.include_tasks: create_icsp.yaml
   when: mirror_v2 == false
@@ -83,25 +128,6 @@
   when: mirror_v2 == true
   tags:
     - icsp
-
-- name: include tasks for ssh keypair
-  ansible.builtin.import_tasks: create_ssh_keypair.yaml
-  when: ocp_ssh_pub is undefined or
-        ocp_ssh_pub == None or
-        ocp_ssh_pub| length == 0
-  tags:
-    - ssh_keypair
-
-- name: include tasks for certificate generation
-  ansible.builtin.import_tasks: create_certificates.yaml
-  tags:
-    - mirror_registry
-    - certificates
-
-- name: include tasks for pullsecret generation
-  ansible.builtin.import_tasks: create_disco_pull_secret.yaml
-  tags:
-    - disco_pull_secret
 
 - name: generate install-config
   ansible.builtin.template:

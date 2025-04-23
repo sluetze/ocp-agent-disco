@@ -63,6 +63,7 @@ mirror_v2: false
 mirror_data_dir: /data/oc-mirror-data
 mirror_data_dir_owner: "{{ lookup('ansible.builtin.env', 'USER') }}"
 mirror_data_dir_group: "{{ lookup('ansible.builtin.env', 'USER') }}"
+mirror_data_drive: "/dev/vdc"
 
 # defines if you install the registry or not. The binary will get downloaded anyway
 install_registry: false
@@ -77,6 +78,7 @@ mirror_registry_version: 1.3.11
 mirror_registry_data_dir: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/mirror-registry/data"
 mirror_registry_data_group: "{{ lookup('ansible.builtin.env', 'USER') }}"
 mirror_registry_data_user: "{{ lookup('ansible.builtin.env', 'USER') }}"
+mirror_registry_data_drive: "/dev/vdb"
 
 # this dir is where the certificates are saved (rootCA and certificate)
 mirror_registry_cert_dir: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/mirror-registry/"
