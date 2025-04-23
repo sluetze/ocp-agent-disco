@@ -7,6 +7,7 @@
   loop:
     - "{{ mirror_registry_data_dir }}"
     - "{{ mirror_registry_data_dir }}/data"
+  become: true
 
 - name: install mirror-registry
   ansible.builtin.shell:
