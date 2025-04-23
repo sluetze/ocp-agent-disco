@@ -35,6 +35,11 @@
   tags:
     - disco_pull_secret
 
+- name: include tasks for dnsmasq
+  ansible.builtin.import_tasks: create_dns.yaml
+  tags:
+    - dns
+
 # if mode=file, it will mount the drive to the mirror data dir
 - name: include mirror_data_drive configuration
   ansible.builtin.import_tasks: create_mount_drive.yaml

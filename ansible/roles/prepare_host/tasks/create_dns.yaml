@@ -1,0 +1,29 @@
+- name: ensure dnsmasq
+  ansible.builtin.package:
+    name:
+      - dnsmasq
+    state: present
+
+- name: Ensure dnsmasq custom DNS entries for ocp nodes are present
+  ansible.builtin.lineinfile:
+    path: /etc/dnsmasq.d/dnsmasq-ocp.conf
+    line: "address=/{{ item.name }}.{{ ocp_base_domain }}/{{ item.ip }}"
+    create: true
+    state: present
+  loop: "{{ ocp_machines }}"
+  notify: Restart dnsmasq
+
+- name: ensure registry dns entry
+  ansible.builtin.lineinfile:
+    path: /etc/dnsmasq.d/dnsmasq-ocp.conf
+    line: "address=/{{ mirror_registry_hostname }}/{{ mirror_registry_ip }}"
+    create: true
+    state: present
+  loop:
+    - name: '{{ mirror_registry_hostname }}'
+      ip: '{{ mirror_registry_ip }}'
+    - name: api.{{ ocp_cluster_name }}.{{ ocp_base_domain }}
+      ip: '{{ ocp_api_vip }}'
+    - name: .apps.{{ ocp_cluster_name }}.{{ ocp_base_domain }}
+      ip: {{ ocp_ingress_vip }}
+  notify: Restart dnsmasq

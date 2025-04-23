@@ -7,6 +7,15 @@ ocp_cluster_name: ocp
 ocp_compute_hosts: 3
 ocp_control_hosts: 3
 
+# Feature Toggles
+dns_install: false # installs dnsmasq on the node and configures the lookups
+install_registry: false # defines if you install the registry or not. The binary will get downloaded anyway
+mirror_mode: file # mirror_mode defines, if you mirror to disk (file) or into the created mirror_registry (registry)
+mirror_v2: false # mirror_v2 defines if oc-mirror is executed with the --v2 option.
+# this currently does not support all settings
+# to be fair it only covers HEAD mirroring of the full catalog
+# from 4.18 onwards v1 is deprecated
+
 # Networks
 ocp_cluster_network: '10.128.0.0/14' # internal network for the cluster pods
 ocp_host_prefix: '23'
@@ -50,24 +59,14 @@ ocp_ssh_pub: null
 
 config_path: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/configs"
 
-# mirror_mode defines, if you mirror to disk (file) or into the created mirror_registry (registry)
-# currently only file is supported
-mirror_mode: file
-
-# mirror_v2 defines if oc-mirror is executed with the --v2 option.
-# this currently does not support all settings
-# to be fair it only covers HEAD mirroring of the full catalog
-mirror_v2: false
-
 # this dir is for the offline packages
 mirror_data_dir: /data/oc-mirror-data
 mirror_data_dir_owner: "{{ lookup('ansible.builtin.env', 'USER') }}"
 mirror_data_dir_group: "{{ lookup('ansible.builtin.env', 'USER') }}"
 mirror_data_drive: "/dev/vdc"
 
-# defines if you install the registry or not. The binary will get downloaded anyway
-install_registry: false
 mirror_registry_hostname: "registry.{{ ocp_base_domain }}"
+mirror_registry_ip: 192.168.0.250
 mirror_registry_user: init
 mirror_registry_password: "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_lowercase', 'digits'], length=32) }}"
 mirror_registry_rootca_pass: "{{ lookup('ansible.builtin.password', config_path + '/rootca_pass', chars=['ascii_lowercase', 'digits'], length=32) }}"
@@ -81,7 +80,7 @@ mirror_registry_data_user: "{{ lookup('ansible.builtin.env', 'USER') }}"
 mirror_registry_data_drive: "/dev/vdb"
 
 # this dir is where the certificates are saved (rootCA and certificate)
-mirror_registry_cert_dir: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/mirror-registry/"
+mirror_registry_cert_dir: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/mirror-registry"
 
 rh_operators:
   # can be inprecise, we grep for this names in the operator list
