@@ -41,9 +41,12 @@
   vars:
     device: "{{ mirror_data_drive }}"
     dir: "{{ mirror_data_dir }}"
+    mode: '0700'
+    group: "{{ mirror_data_dir_group }}"
+    owner: "{{ mirror_data_dir_owner }}"
   tags:
     - mirror
-  when: mirror_mode == file
+  when: mirror_mode == 'file'
 
 # if mode != file it will mount a drive to teh registry data dir
 - name: include mirror_registry_drive configuration
@@ -51,9 +54,12 @@
   vars:
     device: "{{ mirror_registry_data_drive }}"
     dir: "{{ mirror_registry_data_dir }}"
+    mode: '0700'
+    group: "{{ mirror_registry_data_group }}"
+    owner: "{{ mirror_registry_data_user }}"
   tags:
     - mirror
-  when: mirror_mode != file
+  when: mirror_mode != 'file'
 
 # if install_registry= true, we install the registry on the EXECUTING NODE
 - name: include the install of mirror-registry

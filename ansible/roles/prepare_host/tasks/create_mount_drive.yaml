@@ -2,20 +2,23 @@
   ansible.builtin.file:
     path: "{{ dir }}"
     state: directory
-    owner: root
-    group: root
-    mode: '0770'
+    owner: "{{ owner }}"
+    group: "{{ group }}"
+    mode: "{{ mode }}"
+  become: true
 
 - name: "Create an xfs filesystem on {{ device }}"
   community.general.filesystem:
     fstype: xfs
     state: present
     dev: "{{ device }}"
+  become: true
 
 - name: "Fetch the UUID of {{ device }}"
   command: "blkid -s UUID -o value {{ device }}"
   changed_when: false
   register: blkid_out
+  become: true
 
 - name: "Mount {{ device }} by UUID"
   ansible.posix.mount:
@@ -24,3 +27,4 @@
     fstype: xfs
     opts: defaults
     state: mounted
+  become: true
