@@ -31,8 +31,19 @@
   notify: Restart dnsmasq
   become: true
 
+- name: Set listen-address in dnsmasq config
+  lineinfile:
+    path: /etc/dnsmasq.conf
+    regexp: '^listen-address='
+    line: "listen-address={{ ansible_default_ipv4.address }}"
+    state: present
+    create: yes
+  notify: Restart dnsmasq
+  become: true
+
 - name: enable and start dnsmasq
   ansible.builtin.service:
     name: dnsmasq
     state: started
     enabled: true
+  become: true
