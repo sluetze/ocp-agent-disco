@@ -21,8 +21,8 @@ mirror_v2: false # mirror_v2 defines if oc-mirror is executed with the --v2 opti
 rhel_image_path: './rhel-9.5-x86_64-kvm.qcow2' # path on local machine
 
 #
-ocp_controlplane_flavor: 3746790f-15d7-48f1-bacc-2749d271fdf6
-ocp_compute_flavor: 3746790f-15d7-48f1-bacc-2749d271fdf6
+os_ocp_controlplane_flavor: 3746790f-15d7-48f1-bacc-2749d271fdf6
+os_ocp_compute_flavor: 3746790f-15d7-48f1-bacc-2749d271fdf6
 image_name: "ocp4-{{ lookup('pipe', 'date +%Y-%m-%d') }}"
 os_ocp_control_server_group_name: ocp-control-nodes
 os_ocp_machine_network_name: ocp-network
