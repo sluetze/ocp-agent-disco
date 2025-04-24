@@ -78,7 +78,7 @@
 - name: Ensure a full chain
   ansible.builtin.copy:
     dest: "{{ mirror_registry_cert_dir }}/cert_chain.pem"
-    content: "{{ cert.content }}\n{{ root_ca.content }}"
+    content: "{{ cert.content | b64decode }}\n{{ root_ca.content | b64decode }}"
     mode: '0644'
 
 - name: load certificate to fact
