@@ -65,10 +65,20 @@
     ownca_not_before: "-1d"  # valid since yesterday
   when: cert_out.changed is true
 
+- name: Read certificate.pem (to ensure we have the content)
+  ansible.builtin.slurp:
+    src: "{{ mirror_registry_cert_dir }}/certificate.pem"
+  register: cert
+
+- name: Read rootCA.pem (to ensure we have the content)
+  ansible.builtin.slurp:
+    src: "{{ mirror_registry_cert_dir }}/rootCA.pem"
+  register: root_ca
+
 - name: Ensure a full chain
   ansible.builtin.copy:
     dest: "{{ mirror_registry_cert_dir }}/cert_chain.pem"
-    content: "{{ cert_out.content }}\n{{ ca_out.content }}"
+    content: "{{ cert.content }}\n{{ root_ca.content }}"
     mode: '0644'
 
 - name: load certificate to fact
