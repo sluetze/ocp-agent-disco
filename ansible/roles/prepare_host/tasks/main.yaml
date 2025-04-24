@@ -1,4 +1,18 @@
 ---
+- name: prepare openstack environment (project)
+  ansible.builtin.import_tasks: create_openstack_network.yaml
+  delegate_to: localhost
+  when: openstack_infra is true
+  tags:
+    - openstack
+
+- name: prepare openstack environment (bastion host)
+  ansible.builtin.import_tasks: create_openstack_registry_host.yaml
+  delegate_to: localhost
+  when: openstack_infra is true
+  tags:
+    - openstack
+
 - name: ensure directory exists
   ansible.builtin.file:
     dest: "${XDG_RUNTIME_DIR}/containers/"
@@ -164,3 +178,9 @@
     mode: 0600
   tags:
     - install_configs
+
+- name: generate cluster on openstack
+  ansible.builtin.import_tasks: create_openstack_cluster.yaml
+  when: openstack_infra is true
+  tags:
+    - openstack

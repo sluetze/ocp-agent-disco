@@ -1,0 +1,34 @@
+# Custom variables used within the role
+---
+security_group_rules:
+  ocp_nodes:
+    - { proto: udp, port: '6081', description : "tbd" }
+    - { proto: tcp, port: '80', description : "openshift console / ingress" }
+    - { proto: tcp, port: '443', description : "openshift console / ingress" }
+    - { proto: tcp, port: '9000:9999', description : "tbd" }
+    - { proto: udp, port: '9000:9999', description : "tbd" }
+    - { proto: tcp, port: '30000:32767', description : "tbd" }
+    - { proto: udp, port: '30000:32767', description : "tbd" }
+    - { proto: udp, port: '4789', description : "tbd" }
+    - { proto: tcp, port: '22623', description : "tbd" }
+    - { proto: tcp, port: '2379:2380', description : "tbd" }
+    - { proto: tcp, port: '1936', description : "tbd" }
+    - { proto: tcp, port: '10250:10259', description : "tbd" }
+    - { proto: tcp, port: '22', description : "ssh" }
+    - { proto: tcp, port: '6443', description : "kube-api" }
+    - { proto: tcp, port: '8090', description : "assisted service (install)" }
+    - { proto: icmp, description : "debug" }
+
+  icmp_access:
+    - { proto: icmp, description : "debug", remote: "{{ ocp_machine_network}}" }
+    - { proto: tcp, port: '22:22', description : "tbd", remote : '0.0.0.0/0' }
+    - { proto: tcp, port: '53', description : "dns", remote: "{{ ocp_machine_network}}"  }
+    - { proto: udp, port: '53', description : "dns", remote: "{{ ocp_machine_network}}" }
+
+  web_access:
+    - { proto: tcp, port: '80', description : "openshift console / ingress", remote: "{{ ocp_machine_network}}" }
+    - { proto: tcp, port: '443', description : "openshift console / ingress", remote: "{{ ocp_machine_network}}" }
+    - { proto: tcp, port: '6443', description : "kube-api", remote: "{{ ocp_machine_network }}" }
+
+  mirror_access:
+    - { proto: tcp, port: '8443', description : "mirror-registry" }

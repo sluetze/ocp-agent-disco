@@ -1,0 +1,125 @@
+---
+- name: Create OCP network
+  openstack.cloud.network:
+    cloud: default
+    state: present
+    name: '{{ os_ocp_machine_network_name }}'
+
+- name: Create OCP subnet
+  openstack.cloud.subnet:
+    cloud: default
+    state: present
+    name: '{{ os_ocp_machine_subnet_name }}'
+    network_name: '{{ os_ocp_machine_network_name }}'
+    cidr: "{{ ocp_machine_network }}"
+    dns_nameservers: "{{ mirror_registry_ip }}"
+  register: ocp_machine_network_info
+
+- name: Create OCP router
+  openstack.cloud.router:
+    cloud: default
+    state: present
+    name: ocp-router
+    network: "{{ os_provider_net_name }}"
+    interfaces:
+      - "{{ ocp_machine_network_info.id }}"
+
+- name: Create security group for OCP nodes
+  openstack.cloud.security_group:
+    cloud: default
+    state: present
+    name: ocp-nodes
+  register: ocp_nodes_sg
+
+- name: Add security group rules to ocp-nodes sg
+  openstack.cloud.security_group_rule:
+    cloud: default
+    security_group: "{{ ocp_nodes_sg.security_group.id }}"
+    protocol: "{{ item.proto }}"
+    port_range_min: "{{ item.port.split(':')[0]|int if ':' in item.port else item.port|int }}"
+    port_range_max: "{{ item.port.split(':')[1]|int if ':' in item.port else item.port|int }}"
+    remote_ip_prefix: "{{ ocp_machine_network }}"
+    description: "{{ item.description | default(omit) }}"
+  loop: "{{ security_group_rules.ocp_nodes }}"
+  when: item.proto != 'icmp'
+  ignore_errors: true
+
+- name: Add ICMP rule to ocp-nodes sg
+  openstack.cloud.security_group_rule:
+    cloud: default
+    security_group: "{{ ocp_nodes_sg.security_group.id }}"
+    protocol: icmp
+    remote_ip_prefix: "{{ ocp_machine_network }}"
+
+- name: Create security group for icmp
+  openstack.cloud.security_group:
+    cloud: default
+    state: present
+    name: icmp_access
+  register: icmp_access_sg
+
+- name: Add security group rules to icmp_access sg
+  openstack.cloud.security_group_rule:
+    cloud: default
+    security_group: "{{ icmp_access_sg.security_group.id }}"
+    protocol: "{{ item.proto }}"
+    port_range_min: "{{ item.port.split(':')[0]|int if ':' in item.port else item.port|int }}"
+    port_range_max: "{{ item.port.split(':')[1]|int if ':' in item.port else item.port|int }}"
+    remote_ip_prefix: "{{ ocp_machine_network }}"
+    description: "{{ item.description | default(omit) }}"
+  loop: "{{ security_group_rules.icmp_access }}"
+  when: item.proto != 'icmp'
+  ignore_errors: true
+
+- name: Add ICMP rule to icmp_access sg
+  openstack.cloud.security_group_rule:
+    cloud: default
+    security_group: "{{ icmp_access_sg.security_group.id }}"
+    protocol: icmp
+    remote_ip_prefix: "{{ ocp_machine_network }}"
+
+- name: Create security group for web-access
+  openstack.cloud.security_group:
+    cloud: default
+    state: present
+    name: web_access
+  register: web_access_sg
+
+- name: Add security group rules to web_access sg
+  openstack.cloud.security_group_rule:
+    cloud: default
+    security_group: "{{ web_access_sg.security_group.id }}"
+    protocol: "{{ item.proto }}"
+    port_range_min: "{{ item.port.split(':')[0]|int if ':' in item.port else item.port|int }}"
+    port_range_max: "{{ item.port.split(':')[1]|int if ':' in item.port else item.port|int }}"
+    remote_ip_prefix: "{{ ocp_machine_network }}"
+    description: "{{ item.description | default(omit) }}"
+  loop: "{{ security_group_rules.web_access }}"
+  ignore_errors: true
+
+- name: Create security group for mirror-access
+  openstack.cloud.security_group:
+    cloud: default
+    state: present
+    name: mirror_access
+  register: mirror_access_sg
+
+- name: Add security group rules to mirror_access sg
+  openstack.cloud.security_group_rule:
+    cloud: default
+    security_group: "{{ mirror_access_sg.security_group.id }}"
+    protocol: "{{ item.proto }}"
+    port_range_min: "{{ item.port.split(':')[0]|int if ':' in item.port else item.port|int }}"
+    port_range_max: "{{ item.port.split(':')[1]|int if ':' in item.port else item.port|int }}"
+    remote_ip_prefix: "{{ ocp_machine_network }}"
+    description: "{{ item.description | default(omit) }}"
+  loop: "{{ security_group_rules.mirror_access }}"
+
+- name: Create ports for control and compute nodes
+  openstack.cloud.port:
+    name: "{{ item.name }}"
+    network: "{{ os_ocp_machine_network_name }}"
+    security_groups:
+      - ocp-nodes
+    state: present
+  loop: '{{ ocp_machines }}'

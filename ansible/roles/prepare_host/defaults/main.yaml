@@ -10,11 +10,35 @@ ocp_control_hosts: 3
 # Feature Toggles
 dns_install: false # installs dnsmasq on the node and configures the lookups
 install_registry: false # defines if you install the registry or not. The binary will get downloaded anyway
+openstack_infra: false
 mirror_mode: file # mirror_mode defines, if you mirror to disk (file) or into the created mirror_registry (registry)
 mirror_v2: false # mirror_v2 defines if oc-mirror is executed with the --v2 option.
 # this currently does not support all settings
 # to be fair it only covers HEAD mirroring of the full catalog
 # from 4.18 onwards v1 is deprecated
+
+# OpenStack Configuration
+rhel_image_path: './rhel-9.5-x86_64-kvm.qcow2' # path on local machine
+
+#
+ocp_controlplane_flavor: 3746790f-15d7-48f1-bacc-2749d271fdf6
+ocp_compute_flavor: 3746790f-15d7-48f1-bacc-2749d271fdf6
+image_name: "ocp4-{{ lookup('pipe', 'date +%Y-%m-%d') }}"
+os_ocp_control_server_group_name: ocp-control-nodes
+os_ocp_machine_network_name: ocp-network
+os_ocp_machine_subnet_name: ocp-subnet
+os_ocp_compute_server_group_name: ocp-compute-nodes
+os_ocp_agent_image_path: '{{ config_path }}/agent.x86_64.iso' # path on bastion node
+os_ocp_agent_image_name: 'ocp-agent-{{ ansible_date_time.date }}'
+os_provider_net_name: provider
+
+os_keypair_pubkey_path: ~/.ssh/id_sina_cloud_redhat.pub
+os_keypair_name: redhat
+
+# dnsmasq configuration
+dns_upstream_nameservers:
+  - 9.9.9.9
+  - 1.1.1.1
 
 # Networks
 ocp_cluster_network: '10.128.0.0/14' # internal network for the cluster pods
