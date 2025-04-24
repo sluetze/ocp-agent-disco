@@ -2,3 +2,4 @@ ansible-navigator.yaml
 **/.oc-mirror.log
 **/packages.out
 ansible/ocp_disco_vars.yaml
+.ansible
