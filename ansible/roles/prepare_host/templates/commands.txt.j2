@@ -13,7 +13,7 @@ scp {{ mirror_data_dir }} {{my_remote_user}}@{{ my_remote_host }}:{{ config_path
 # untar mirror-registry
 tar -xzf
 # if registry shall be installed
-mirror-registry install --quayHostname {{ mirror_registry_hostname }} --quayRoot {{ mirror_registry_data_dir }}/config --quayStorage {{ mirror_registry_data_dir }}/data --initUser {{ mirror_registry_user }} --initPassword {{ mirror_registry_password }} --sslKey {{ mirror_registry_cert_dir }}/certificate.key --sslCert {{ mirror_registry_cert_dir }}/certificate.pem"
+mirror-registry install --quayHostname {{ mirror_registry_hostname }} --quayRoot {{ mirror_registry_data_dir }}/config --quayStorage {{ mirror_registry_data_dir }}/data --initUser {{ mirror_registry_user }} --initPassword {{ mirror_registry_password }} --sslKey {{ mirror_registry_cert_dir }}/certificate.key --sslCert {{ mirror_registry_cert_dir }}/cert_chain.pem"
 
 # cp configs/id_ed25519 ~/.ssh/.
 
