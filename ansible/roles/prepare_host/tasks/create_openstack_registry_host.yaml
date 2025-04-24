@@ -24,5 +24,19 @@
     state: present
   register: mirror_volume
 
-#- name: create bastion host
-#  openstack.cloud.server:
+- name: Create bastion host
+  openstack.cloud.server:
+    name: bastion
+    auto_ip: true
+    image: rhel-9.5-x86_64
+    flavor: m1.small
+    security_groups:
+      - ocp_nodes
+      - icmp_access
+      - mirror_access
+    volumes:
+      - mirror-volume
+    wait: true
+    state: present
+  tags:
+    - never
