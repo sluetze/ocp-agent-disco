@@ -12,7 +12,7 @@
     name: '{{ os_ocp_machine_subnet_name }}'
     network_name: '{{ os_ocp_machine_network_name }}'
     cidr: "{{ ocp_machine_network }}"
-    dns_nameservers: "{{ mirror_registry_ip }}"
+    dns_nameservers: "{{ ocp_dns_server }}"
   register: ocp_machine_network_info
 
 - name: Create OCP router
