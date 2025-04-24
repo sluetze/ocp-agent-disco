@@ -24,12 +24,12 @@
   community.crypto.x509_certificate:
     path: "{{ mirror_registry_cert_dir }}/rootCA.pem"
     csr_content: "{{ ca_csr.csr }}"
-    privatekey_path:  "{{ mirror_registry_cert_dir }}/rootCA.key"
+    privatekey_path: "{{ mirror_registry_cert_dir }}/rootCA.key"
     privatekey_passphrase: "{{ mirror_registry_rootca_pass }}"
     provider: selfsigned
   when: ca_out.changed is true
 
-- name: ensure ca is in anchors folder
+- name: Ensure ca is in anchors folder
   ansible.builtin.copy:
     src: "{{ mirror_registry_cert_dir }}/rootCA.pem"
     dest: "/etc/pki/ca-trust/source/anchors/mirror-reg.pem"
@@ -81,6 +81,6 @@
     content: "{{ cert.content | b64decode }}\n{{ root_ca.content | b64decode }}"
     mode: '0644'
 
-- name: load certificate to fact
+- name: Load certificate to fact
   ansible.builtin.set_fact:
     mirror_registry_cert_pub: "{{ lookup('ansible.builtin.file', mirror_registry_cert_dir + '/rootCA.pem') }}"

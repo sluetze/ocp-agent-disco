@@ -1,13 +1,13 @@
 # the following tasks are only done to create the ICSP File
 # it might be useful to make this an async task
-- name: mirror to local disk (v2)
+- name: Mirror to local disk (v2)
   ansible.builtin.command:
     cmd: oc-mirror --config "{{ config_path }}/imagesetconfiguration.yaml" "file://{{ mirror_data_dir }} --v2"
     creates: "{{ mirror_data_dir }}/mirror_seq1_000000.tar"
   register: mirror_result
   when: mirror_mode == "file"
   tags:
-   - mirror
+    - mirror
 
 - name: create manifests
   ansible.builtin.command:

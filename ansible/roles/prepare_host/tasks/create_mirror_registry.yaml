@@ -1,21 +1,21 @@
-- name: install mirror-registry
-  ansible.builtin.shell:
+- name: Install mirror-registry
+  ansible.builtin.command:
     cmd: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/mirror-registry/mirror-registry install --quayHostname {{ mirror_registry_hostname }}:{{ mirror_registry_port }} --quayRoot {{ mirror_registry_data_dir }}/config --quayStorage {{ mirror_registry_data_dir }}/data --initUser {{ mirror_registry_user }} --initPassword {{ mirror_registry_password }} --sslKey {{ mirror_registry_cert_dir }}/certificate.key --sslCert {{ mirror_registry_cert_dir }}/cert_chain.pem"
     creates: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/mirror-registry/data/config/quay-config/config.yaml"
 
-- name: login to registry
+- name: Login to registry
   containers.podman.podman_login:
     username: init
     password: '{{ mirror_registry_password }}'
     registry: '{{ mirror_registry_hostname }}:{{ mirror_registry_port }}'
 
 # for reasons unknown to me the mirror-registry has permission issues
-- name: ensure filepermissions
+- name: Ensure filepermissions
   ansible.builtin.file:
     dest: "{{ item }}"
     owner: 1001
     group: 1001
-    mode: 0777
+    mode: '0777'
     state: directory
   loop:
     - "{{ mirror_registry_data_dir }}/data"

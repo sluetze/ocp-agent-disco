@@ -1,4 +1,4 @@
-- name: ensure dnsmasq
+- name: Ensure dnsmasq
   ansible.builtin.package:
     name:
       - dnsmasq
@@ -10,15 +10,21 @@
     path: /etc/dnsmasq.d/dnsmasq-ocp.conf
     line: "address=/{{ item.name }}.{{ ocp_cluster_name }}.{{ ocp_base_domain }}/{{ item.ip }}"
     create: true
+    mode: '0640'
+    owner: root
+    group: dnsmasq
     state: present
   loop: "{{ ocp_machines }}"
   notify: Restart dnsmasq
   become: true
 
-- name: ensure registry and vip dns entries
+- name: Ensure registry and vip dns entries
   ansible.builtin.lineinfile:
     path: /etc/dnsmasq.d/dnsmasq-ocp.conf
     line: "address=/{{ item.name }}/{{ item.ip }}"
+    mode: '0640'
+    owner: root
+    group: dnsmasq
     create: true
     state: present
   loop:
@@ -34,16 +40,19 @@
   become: true
 
 - name: Set listen-address in dnsmasq config
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/dnsmasq.conf
     regexp: '^listen-address='
     line: "listen-address={{ ansible_default_ipv4.address }}"
+    mode: '0640'
+    owner: root
+    group: dnsmasq
     state: present
-    create: yes
+    create: true
   notify: Restart dnsmasq
   become: true
 
-- name: enable and start dnsmasq
+- name: Ensure enable and start dnsmasq
   ansible.builtin.service:
     name: dnsmasq
     state: started

@@ -7,12 +7,12 @@
   tags:
     - packages
 
-- name: ensure ocp_tools directory
+- name: Ensure ocp_tools directory
   become: true
   ansible.builtin.file:
     state: directory
     name: "{{ item }}"
-    mode: 0700
+    mode: '0700'
     owner: "{{ mirror_data_dir_group }}"
     group: "{{ mirror_data_dir_owner }}"
   loop:
@@ -25,7 +25,7 @@
   tags:
     - packages
 
-- name: print download urls for debugging
+- name: Print download urls for debugging
   ansible.builtin.debug:
     msg: '{{ item }}'
   loop:
@@ -38,7 +38,7 @@
     - debug
 
 
-- name: download client tools
+- name: Download client tools
   ansible.builtin.get_url:
     url: "{{ item }}"
     dest: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/."
@@ -65,7 +65,7 @@
   tags:
     - packages
 
-- name: extract mirror-registry
+- name: Extract mirror-registry
   ansible.builtin.unarchive:
     src: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/mirror-registry.tar.gz"
     dest: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/mirror-registry"
@@ -74,10 +74,10 @@
     - registry
   when: install_registry is true
 
-- name: ensure execution permissions
+- name: eEnsure execution permissions
   ansible.builtin.file:
     state: file
-    mode: 0755
+    mode: '0755'
     name: "{{ lookup('ansible.builtin.env', 'HOME') }}/.local/bin/{{ item }}"
   loop:
     - kubectl

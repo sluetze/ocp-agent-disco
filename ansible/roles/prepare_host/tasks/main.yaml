@@ -1,36 +1,36 @@
 ---
-- name: prepare openstack environment (project)
+- name: Prepare openstack environment (project)
   ansible.builtin.import_tasks: create_openstack_network.yaml
   delegate_to: localhost
   when: openstack_infra is true
   tags:
     - openstack
 
-- name: prepare openstack environment (bastion host)
+- name: Prepare openstack environment (bastion host)
   ansible.builtin.import_tasks: create_openstack_registry_host.yaml
   delegate_to: localhost
   when: openstack_infra is true
   tags:
     - openstack
 
-- name: ensure directory exists
+- name: Ensure directory exists
   ansible.builtin.file:
     dest: "${XDG_RUNTIME_DIR}/containers/"
     state: directory
   when: ocp_rh_pull_secret != "replaceme"
 
-- name: login to red hat registry
+- name: Login to red hat registry
   ansible.builtin.copy:
     content: "{{ ocp_rh_pull_secret }}"
     dest: "${XDG_RUNTIME_DIR}/containers/auth.json"
   when: ocp_rh_pull_secret != "replaceme"
 
-- name: include package download and configuration
+- name: Include package download and configuration
   ansible.builtin.import_tasks: create_packages.yaml
   tags:
     - packages
 
-- name: include tasks for ssh keypair
+- name: Include tasks for ssh keypair
   ansible.builtin.import_tasks: create_ssh_keypair.yaml
   when: ocp_ssh_pub is undefined or
         ocp_ssh_pub == None or
@@ -38,25 +38,25 @@
   tags:
     - ssh_keypair
 
-- name: include tasks for certificate generation
+- name: Include tasks for certificate generation
   ansible.builtin.import_tasks: create_certificates.yaml
   tags:
     - mirror_registry
     - certificates
 
-- name: include tasks for pullsecret generation
+- name: Include tasks for pullsecret generation
   ansible.builtin.import_tasks: create_disco_pull_secret.yaml
   tags:
     - disco_pull_secret
 
-- name: include tasks for dnsmasq
+- name: Include tasks for dnsmasq
   ansible.builtin.import_tasks: create_dns.yaml
   tags:
     - dns
   when: dns_install is true
 
 # if mode=file, it will mount the drive to the mirror data dir
-- name: include mirror_data_drive configuration
+- name: Include mirror_data_drive configuration
   ansible.builtin.import_tasks: create_mount_drive.yaml
   vars:
     device: "{{ mirror_data_drive }}"
@@ -69,7 +69,7 @@
   when: mirror_mode == 'file'
 
 # if mode != file it will mount a drive to teh registry data dir
-- name: include mirror_registry_drive configuration
+- name: Include mirror_registry_drive configuration
   ansible.builtin.import_tasks: create_mount_drive.yaml
   vars:
     device: "{{ mirror_registry_data_drive }}"
@@ -82,13 +82,13 @@
   when: mirror_mode != 'file'
 
 # if install_registry= true, we install the registry on the EXECUTING NODE
-- name: include the install of mirror-registry
+- name: Include the install of mirror-registry
   ansible.builtin.import_tasks: create_mirror_registry.yaml
   tags:
     - mirror
-  when: install_registry == true
+  when: install_registry is true
 
-- name: include tasks for operatorversions (rh index)
+- name: Include tasks for operatorversions (rh index)
   ansible.builtin.import_tasks: create_operator_versions.yaml
   vars:
     operator_catalog: "registry.redhat.io/redhat/redhat-operator-index"
@@ -99,7 +99,7 @@
   tags:
     - isc
 
-- name: set operatorversions (rh index)
+- name: Set operatorversions (rh index)
   ansible.builtin.set_fact:
     rh_operator_packages: "{{ operator_versions }}"
   when: ( rh_operators is defined ) and
@@ -107,7 +107,7 @@
   tags:
     - isc
 
-- name: include tasks for operatorversions (certified index)
+- name: Include tasks for operatorversions (certified index)
   ansible.builtin.import_tasks: create_operator_versions.yaml
   vars:
     operator_catalog: "registry.redhat.io/redhat/certified-operator-index"
@@ -117,7 +117,7 @@
   tags:
     - isc
 
-- name: set operatorversions (certified index)
+- name: Set operatorversions (certified index)
   ansible.builtin.set_fact:
     certified_operator_packages: "{{ operator_versions }}"
   when: ( certified_operators is defined ) and
@@ -125,61 +125,61 @@
   tags:
     - isc
 
-- name: generate ImageSetConfiguration (v1)
+- name: Generate ImageSetConfiguration (v1)
   ansible.builtin.template:
     src: ./templates/imagesetconfiguration.yaml.j2
     dest: "{{ config_path }}/imagesetconfiguration.yaml"
-    mode: 0644
-  when: mirror_v2 == false
+    mode: '0644'
+  when: mirror_v2 is false
   tags:
     - isc
 
-- name: include tasks for icsp creation (v1)
+- name: Include tasks for icsp creation (v1)
   ansible.builtin.include_tasks: create_icsp.yaml
-  when: mirror_v2 == false
+  when: mirror_v2 is false
   tags:
     - icsp
 
-- name: generate ImageSetConfiguration (v2)
+- name: Generate ImageSetConfiguration (v2)
   ansible.builtin.template:
     src: ./templates/imagesetconfiguration-v2.yaml.j2
     dest: "{{ config_path }}/imagesetconfiguration.yaml"
-    mode: 0644
-  when: mirror_v2 == true
+    mode: '0644'
+  when: mirror_v2 is true
   tags:
     - isc
 
-- name: include tasks for icsp creation (v1)
+- name: Include tasks for icsp creation (v1)
   ansible.builtin.include_tasks: create_icsp.yaml
-  when: mirror_v2 == true
+  when: mirror_v2 is true
   tags:
     - icsp
 
-- name: generate install-config
+- name: Generate install-config
   ansible.builtin.template:
     src: ./templates/install-config.yaml.j2
     dest: "{{ config_path }}/install-config.yaml"
-    mode: 0600
+    mode: '0600'
   tags:
     - install_configs
 
-- name: generate agent-config
+- name: Generate agent-config
   ansible.builtin.template:
     src: ./templates/agent-config.yaml.j2
     dest: "{{ config_path }}/agent-config.yaml"
-    mode: 0600
+    mode: '0600'
   tags:
     - install_configs
 
-- name: generate remote commands
+- name: Generate remote commands
   ansible.builtin.template:
     src: ./templates/commands.txt.j2
     dest: "{{ config_path }}/commands.txt"
-    mode: 0600
+    mode: '0600'
   tags:
     - install_configs
 
-- name: generate cluster on openstack
+- name: Generate cluster on openstack
   ansible.builtin.import_tasks: create_openstack_cluster.yaml
   when: openstack_infra is true
   tags:

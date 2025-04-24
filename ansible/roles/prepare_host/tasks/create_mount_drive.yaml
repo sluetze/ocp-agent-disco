@@ -15,12 +15,12 @@
   become: true
 
 - name: "Fetch the UUID of {{ device }}"
-  command: "blkid -s UUID -o value {{ device }}"
+  ansible.builtin.command: "blkid -s UUID -o value {{ device }}"
   changed_when: false
   register: blkid_out
   become: true
 
-- name: "Mount {{ device }} by UUID"
+- name: "Mount by UUID for {{ device }}"
   ansible.posix.mount:
     path: "{{ dir }}"
     src: "UUID={{ blkid_out.stdout }}"

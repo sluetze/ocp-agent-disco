@@ -1,20 +1,20 @@
 # there are multiple ugly hacks here, since oc-mirror currently does not support any output format other than a space limited table
-- name: generate package list
+- name: Generate package list
   ansible.builtin.shell:
     cmd: 'oc-mirror list operators --catalog={{ operator_catalog }}:v{{ ocp_version[:4] }} > packages.out'
   register: packages
   changed_when: packages.rc != 0
-    #creates: package.out
+    # creates: package.out
 
-- name: get channel for each operator
+- name: Get channel for each operator
   ansible.builtin.shell:
-    #cmd: echo {{ packages.stdout }} | grep {{ item }} | tr -s " " | awk '{ print $1, $NF}' | sed -e 's/^/{"name":"/g' -e 's/ /","channel":"/g' -e 's/$/"}/g'
+    # cmd: echo {{ packages.stdout }} | grep {{ item }} | tr -s " " | awk '{ print $1, $NF}' | sed -e 's/^/{"name":"/g' -e 's/ /","channel":"/g' -e 's/$/"}/g'
     cmd: cat packages.out | grep {{ item }} | tr -s " " | awk '{ print $1, $NF}' | sed -e 's/^/{"name":"/g' -e 's/ /","channel":"/g' -e 's/$/"}/g'
   register: operator_package_channels
   changed_when: operator_package_channels.rc != 0
   loop: "{{ operators }}"
 
-- name: debug
+- name: Debug
   ansible.builtin.debug:
     msg: "{{ operator_package_channels.results | map(attribute='stdout') | map('from_json') | list }}"
   tags:
@@ -22,15 +22,17 @@
     - debug
 
 # we might be able to skip this, since
-# By default, for each Operator in the catalog, oc-mirror includes the latest Operator version (channel head) from the default channel. If you want to mirror all Operator versions, and not just the channel heads, you must set the mirror.operators.full field to true.
+# By default, for each Operator in the catalog, oc-mirror includes the latest Operator version (channel head)
+# from the default channel. If you want to mirror all Operator versions, and not just the channel heads,
+# you must set the mirror.operators.full field to true.
 # but then we lose documentation on which versions are used in the poc
-- name: get latest versions for each operator
+- name: Get latest versions for each operator
   ansible.builtin.command:
     cmd: oc-mirror list operators --catalog={{ operator_catalog }}:v{{ ocp_version[:4] }} --package={{ item.name }} --channel={{ item.channel }}
   register: operator_package_channels_versions
   changed_when: operator_package_channels_versions.rc != 0
   loop: "{{ operator_package_channels.results | map(attribute='stdout') | map('from_json') | list }}"
 
-- name: create callback fact
+- name: Create callback fact
   ansible.builtin.set_fact:
     operator_versions: "{{ operator_package_channels_versions.results }}"
