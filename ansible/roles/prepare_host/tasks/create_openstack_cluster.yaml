@@ -4,7 +4,6 @@
     state: present
     name: '{{ os_ocp_control_server_group_name }}'
     policy: anti-affinity
-  register: control_group
 
 - name: ensure compute server group
   openstack.cloud.server_group:
@@ -12,7 +11,6 @@
     state: present
     name: '{{ os_ocp_compute_server_group_name }}'
     policy: anti-affinity
-  register: control_group
 
 - name: Upload agent-ISO image to OpenStack
   openstack.cloud.image:
@@ -34,32 +32,16 @@
     state: present
   loop: "{{ ocp_machines }}"
 
-- name: Create control plane servers
+- name: Create ocp servers
   openstack.cloud.server:
-    name: "{{ item }}"
+    name: "{{ item.name }}"
     image: "{{ ocp_image_info.openstack_images[0].id }}"
-    flavor: "{{ controlplane_flavor }}"
+    flavor: "{{ os_ocp_controlplane_flavor if item.name.startswith('control') else os_ocp_compute_flavor }}"
     security_groups: [ocp-nodes]
-    boot_volume: "{{ item }}-volume"
+    boot_volume: "{{ item.name }}-volume"
     network:
-      port: "{{ item }}"
-    scheduler_hints:
-      group: "{{ control_group.server_groups[0].id }}"
+      port: "{{ item.name }}"
+    server_group: "{{ os_ocp_control_server_group_name if item.name.startswith('control') else os_ocp_compute_server_group_name }}"
     wait: yes
     state: present
-  loop: "{{ control_nodes }}"
-
-- name: Create compute node servers
-  openstack.cloud.server:
-    name: "{{ item }}"
-    image: "{{ ocp_image_info.openstack_images[0].id }}"
-    flavor: "{{ compute_flavor }}"
-    security_groups: [ocp-nodes]
-    boot_volume: "{{ item }}-volume"
-    network:
-      port: "{{ item }}"
-    scheduler_hints:
-      group: "{{ compute_group.server_groups[0].id }}"
-    wait: yes
-    state: present
-  loop: "{{ compute_nodes }}"
+  loop: "{{ ocp_machines }}"
