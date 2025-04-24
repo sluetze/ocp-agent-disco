@@ -39,6 +39,7 @@
   ansible.builtin.import_tasks: create_dns.yaml
   tags:
     - dns
+  when: dns_install is true
 
 # if mode=file, it will mount the drive to the mirror data dir
 - name: include mirror_data_drive configuration
