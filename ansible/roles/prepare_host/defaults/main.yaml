@@ -115,6 +115,41 @@ rh_operators:
   # layered products
   - serverless
 
+rh_operators_v2:
+  # correct naming is required!
+  # use https://github.com/lmzuccarelli/rust-operator-catalog-viewer to find out the names
+  # Operators for Quay
+  - name: quay-operator
+  - name: quay-bridge-operator
+  - name: container-security-operator
+
+  # Operators in ACM Context
+  - name: advanced-cluster-management
+  - name: gatekeeper-operator-product
+  - name: multicluster-engine
+
+  # Operators in Security Context (inkl. ACS)
+  - name: compliance-operator
+  - name: file-integrity-operator
+  - name: openshift-cert-manager-operator
+  - name: security-profiles-operator
+  - name: rhacs-operator
+
+  # Operators in ODF Context (may be incomplete)
+  - name: ocs-client-operator
+  - name: ocs-operator
+  - name: odf-csi-addons-operator
+  - name: odf-multicluster-orchestrator
+  - name: odf-operator
+  - name: odr-cluster-operator
+  - name: odr-hub-operator
+
+  # OCP
+  - name: openshift-gitops-operator
+  - name: openshift-pipelines-operator-rh
+  - name: devspaces
+  - name: cincinnati-operator
+
 certified_operators: []
 certified_operators_example:
   - gpu-operator-certified

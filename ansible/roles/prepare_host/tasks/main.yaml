@@ -149,7 +149,7 @@
   tags:
     - isc
 
-- name: Include tasks for icsp creation (v1)
+- name: Include tasks for icsp creation (v2)
   ansible.builtin.include_tasks: create_icsp.yaml
   when: mirror_v2 is true
   tags:

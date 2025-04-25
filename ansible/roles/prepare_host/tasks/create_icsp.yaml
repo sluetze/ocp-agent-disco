@@ -7,7 +7,7 @@
   register: mirror_result
   when: mirror_mode == "file"
   tags:
-   - mirror
+    - mirror
 
 - name: create manifests
   ansible.builtin.command:
