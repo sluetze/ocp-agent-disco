@@ -1,0 +1,20 @@
+local=/{{ ocp_cluster_name }}.{{ ocp_base_domain }}/
+no-poll
+
+# ocp machines
+{% for machine in ocp_machines %}
+address=/{{ machine.name }}.{{ ocp_cluster_name }}.{{ ocp_base_domain }}/{{ machine.ip }}
+{% endfor %}
+
+# ocp machines reverse records (ptr)
+{% for machine in ocp_machines %}
+ptr-record={{ machine.ip }}.in-addr.arpa,{{ machine.name }}.{{ ocp_cluster_name }}.{{ ocp_base_domain }}
+{% endfor %}
+
+# ocp vips
+address=/api.{{ ocp_cluster_name }}.{{ ocp_base_domain }}/{{ ocp_api_vip }}
+address=/api-int.{{ ocp_cluster_name }}.{{ ocp_base_domain }}/{{ ocp_api_vip }}
+address=/.apps.{{ ocp_cluster_name }}.{{ ocp_base_domain }}/{{ ocp_ingress_vip }}
+
+# registry
+address=/{{ mirror_registry_hostname }}/{{ mirror_registry_ip }}

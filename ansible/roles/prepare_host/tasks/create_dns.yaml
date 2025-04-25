@@ -5,37 +5,13 @@
     state: present
   become: true
 
-- name: Ensure dnsmasq custom DNS entries for ocp nodes are present
-  ansible.builtin.lineinfile:
-    path: /etc/dnsmasq.d/dnsmasq-ocp.conf
-    line: "address=/{{ item.name }}.{{ ocp_cluster_name }}.{{ ocp_base_domain }}/{{ item.ip }}"
-    create: true
+- name: Ensure dnsmasq ocp-config
+  ansible.builtin.template:
+    dest: /etc/dnsmasq.d/dnsmasq-ocp.conf
+    src: dnsmasq-ocp.conf.j2
     mode: '0640'
     owner: root
     group: dnsmasq
-    state: present
-  loop: "{{ ocp_machines }}"
-  notify: Restart dnsmasq
-  become: true
-
-- name: Ensure registry and vip dns entries
-  ansible.builtin.lineinfile:
-    path: /etc/dnsmasq.d/dnsmasq-ocp.conf
-    line: "address=/{{ item.name }}/{{ item.ip }}"
-    mode: '0640'
-    owner: root
-    group: dnsmasq
-    create: true
-    state: present
-  loop:
-    - name: '{{ mirror_registry_hostname }}'
-      ip: '{{ mirror_registry_ip }}'
-    - name: 'api.{{ ocp_cluster_name }}.{{ ocp_base_domain }}'
-      ip: '{{ ocp_api_vip }}'
-    - name: 'api-int.{{ ocp_cluster_name }}.{{ ocp_base_domain }}'
-      ip: '{{ ocp_api_vip }}'
-    - name: '.apps.{{ ocp_cluster_name }}.{{ ocp_base_domain }}'
-      ip: '{{ ocp_ingress_vip }}'
   notify: Restart dnsmasq
   become: true
 
