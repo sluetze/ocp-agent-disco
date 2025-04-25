@@ -3,7 +3,7 @@
   become: true
 
 - name: Restart dnsmasq
-  service:
+  ansible.builtin.service:
     name: dnsmasq
     state: restarted
   become: true
