@@ -25,9 +25,12 @@ os_ocp_controlplane_flavor: 3746790f-15d7-48f1-bacc-2749d271fdf6
 os_ocp_compute_flavor: 3746790f-15d7-48f1-bacc-2749d271fdf6
 image_name: "ocp4-{{ lookup('pipe', 'date +%Y-%m-%d') }}"
 os_ocp_control_server_group_name: ocp-control-nodes
+os_ocp_control_server_group_policy: 'soft-anti-affinity' # values: anti-affinity, soft-anti-affinity, affinity, soft-affinity
+os_ocp_compute_server_group_name: ocp-compute-nodes
+os_ocp_compute_server_group_policy: 'soft-anti-affinity' # values: anti-affinity, soft-anti-affinity, affinity, soft-affinity
+
 os_ocp_machine_network_name: ocp-network
 os_ocp_machine_subnet_name: ocp-subnet
-os_ocp_compute_server_group_name: ocp-compute-nodes
 os_ocp_agent_image_path: '{{ config_path }}/agent.x86_64.iso' # path on bastion node
 os_ocp_agent_image_name: 'ocp-agent-{{ ansible_date_time.date }}'
 os_provider_net_name: provider

@@ -3,7 +3,7 @@
     cloud: default
     state: present
     name: '{{ os_ocp_control_server_group_name }}'
-    policy: anti-affinity
+    policy: '{{ os_ocp_control_server_group_policy }}'
   register: control_group
 
 - name: Ensure compute server group
@@ -11,18 +11,19 @@
     cloud: default
     state: present
     name: '{{ os_ocp_compute_server_group_name }}'
-    policy: anti-affinity
+    policy: '{{ os_ocp_compute_server_group_policy }}'
   register: compute_group
 
-- name: Upload agent-ISO image to OpenStack
-  openstack.cloud.image:
-    name: "{{ os_ocp_agent_image_name }}"
-    filename: "{{ os_ocp_agent_image_path }}"
-    disk_format: iso
-    container_format: bare
-    state: present
-  tags:
-    - never
+# - name: Upload agent-ISO image to OpenStack
+#   openstack.cloud.image:
+#     name: "{{ os_ocp_agent_image_name }}"
+#     filename: "{{ os_ocp_agent_image_path }}"
+#     disk_format: iso
+#     container_format: bare
+#     state: present
+#   tags:
+#     - never
+##  delegate_to: bastion
 
 - name: Create volumes for all nodes
   openstack.cloud.volume:
