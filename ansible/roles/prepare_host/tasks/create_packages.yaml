@@ -27,12 +27,16 @@
 
 - name: Print download urls for debugging
   ansible.builtin.debug:
-    msg: '{{ item }}'
+    msg: '{{ item.url }} SHA {{ item.checksum }}'
   loop:
-    - "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_version }}/oc-mirror.tar.gz"
-    - "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_version }}/openshift-client-linux-{{ ocp_version }}.tar.gz"
-    - "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_version }}/openshift-install-linux-{{ ocp_version }}.tar.gz"
-    - "https://mirror.openshift.com/pub/openshift-v4/clients/mirror-registry/{{ mirror_registry_version }}/mirror-registry.tar.gz"
+    - url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_version }}/oc-mirror.tar.gz"
+      checksum: '{{ checksums.oc_mirror }}'
+    - url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_version }}/openshift-client-linux-{{ ocp_version }}.tar.gz"
+      checksum: '{{ checksums.openshift_client_linux }}'
+    - url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_version }}/openshift-install-linux-{{ ocp_version }}.tar.gz"
+      checksum: '{{ checksums.openshift_install_linux }}'
+    - url: "https://mirror.openshift.com/pub/cgw/mirror-registry/{{ mirror_registry_version }}/mirror-registry.tar.gz"
+      checksum: '{{ checksums.mirror_registry }}'
   tags:
     - never
     - debug
@@ -40,13 +44,18 @@
 
 - name: Download client tools
   ansible.builtin.get_url:
-    url: "{{ item }}"
+    url: "{{ item.url }}"
     dest: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/."
+    checksum: "{{ item.checksum }}"
   loop:
-    - "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_version }}/oc-mirror.tar.gz"
-    - "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_version }}/openshift-client-linux-{{ ocp_version }}.tar.gz"
-    - "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_version }}/openshift-install-linux-{{ ocp_version }}.tar.gz"
-    - "https://mirror.openshift.com/pub/openshift-v4/clients/mirror-registry/{{ mirror_registry_version }}/mirror-registry.tar.gz"
+    - url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_version }}/oc-mirror.tar.gz"
+      checksum: '{{ checksums.oc_mirror }}'
+    - url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_version }}/openshift-client-linux-{{ ocp_version }}.tar.gz"
+      checksum: '{{ checksums.openshift_client_linux }}'
+    - url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_version }}/openshift-install-linux-{{ ocp_version }}.tar.gz"
+      checksum: '{{ checksums.openshift_install_linux }}'
+    - url: "https://mirror.openshift.com/pub/cgw/mirror-registry/{{ mirror_registry_version }}/mirror-registry.tar.gz"
+      checksum: '{{ checksums.mirror_registry }}'
   tags:
     - packages
 

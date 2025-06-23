@@ -159,3 +159,9 @@ certified_operators_example:
 
 additional_images:
   - k8s.gcr.io/sig-storage/nfs-subdir-external-provisioner:v4.0.2
+
+checksums:
+  oc_mirror: ""
+  openshift_client_linux: ""
+  openshift_install_linux: ""
+  oc_mirror_registry: ""
