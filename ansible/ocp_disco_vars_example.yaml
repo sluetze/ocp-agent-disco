@@ -66,7 +66,7 @@ ocp_dns_server: 192.168.111.1
 
 # if you want to provide sha hashes for your download files, provide them here
 checksums:
-  oc_mirror: f1078555d1af4e8326da530258bf64c9e5c3c87fe3d06d76f515b41a6e5a6f3e # 4.18.6
-  openshift_client_linux: 3c47ee67b4fc3c423cc15ca5699d61fd1619dbafc92f564492ddb860b24c541c # 4.18.6
-  openshift_install_linux: bff706fdeb8476b92ebb78d188d408568a6980bd423bd530f7ad0db27a2b062b # 4.18.6
-  oc_mirror_registry: "fd18b757daaebf1f500b29444dda5377fc77e7ca4a89fe9380382516124ee681" # 2.0.6
+  oc_mirror: "sha256:f1078555d1af4e8326da530258bf64c9e5c3c87fe3d06d76f515b41a6e5a6f3e" # 4.18.6
+  openshift_client_linux: "sha256:3c47ee67b4fc3c423cc15ca5699d61fd1619dbafc92f564492ddb860b24c541c" # 4.18.6
+  openshift_install_linux: "sha256:bff706fdeb8476b92ebb78d188d408568a6980bd423bd530f7ad0db27a2b062b" # 4.18.6
+  oc_mirror_registry: "sha256:fd18b757daaebf1f500b29444dda5377fc77e7ca4a89fe9380382516124ee681" # 2.0.6
