@@ -35,7 +35,7 @@
       checksum: '{{ checksums.openshift_client_linux }}'
     - url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_version }}/openshift-install-linux-{{ ocp_version }}.tar.gz"
       checksum: '{{ checksums.openshift_install_linux }}'
-    - url: "https://mirror.openshift.com/pub/cgw/mirror-registry/{{ mirror_registry_version }}/mirror-registry.tar.gz"
+    - url: "https://mirror.openshift.com/pub/cgw/mirror-registry/{{ mirror_registry_version }}/mirror-registry-amd64.tar.gz"
       checksum: '{{ checksums.oc_mirror_registry }}'
   tags:
     - never
@@ -54,7 +54,7 @@
       checksum: '{{ checksums.openshift_client_linux }}'
     - url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_version }}/openshift-install-linux-{{ ocp_version }}.tar.gz"
       checksum: '{{ checksums.openshift_install_linux }}'
-    - url: "https://mirror.openshift.com/pub/cgw/mirror-registry/{{ mirror_registry_version }}/mirror-registry.tar.gz"
+    - url: "https://mirror.openshift.com/pub/cgw/mirror-registry/{{ mirror_registry_version }}/mirror-registry-amd64.tar.gz"
       checksum: '{{ checksums.oc_mirror_registry }}'
   tags:
     - packages
