@@ -76,7 +76,7 @@
 
 - name: Extract mirror-registry
   ansible.builtin.unarchive:
-    src: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/mirror-registry.tar.gz"
+    src: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/mirror-registry-amd64.tar.gz"
     dest: "{{ lookup('ansible.builtin.env', 'HOME') }}/ocp_tools/mirror-registry"
   tags:
     - packages
