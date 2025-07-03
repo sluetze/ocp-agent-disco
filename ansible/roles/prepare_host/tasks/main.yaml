@@ -130,6 +130,7 @@
     src: ./templates/imagesetconfiguration.yaml.j2
     dest: "{{ config_path }}/imagesetconfiguration.yaml"
     mode: '0644'
+    backup: true
   when: mirror_v2 is false
   tags:
     - isc
@@ -160,6 +161,7 @@
     src: ./templates/install-config.yaml.j2
     dest: "{{ config_path }}/install-config.yaml"
     mode: '0600'
+    backup: true
   tags:
     - install_configs
 
@@ -168,6 +170,7 @@
     src: ./templates/agent-config.yaml.j2
     dest: "{{ config_path }}/agent-config.yaml"
     mode: '0600'
+    backup: true
   tags:
     - install_configs
 
@@ -176,6 +179,7 @@
     src: ./templates/commands.txt.j2
     dest: "{{ config_path }}/commands.txt"
     mode: '0600'
+    backup: true
   tags:
     - install_configs
 
