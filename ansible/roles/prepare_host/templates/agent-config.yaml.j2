@@ -6,6 +6,7 @@ rendezvousIP: {{ ocp_rendezvous_ip}}
 hosts:
 {% for node in ocp_machines %}
   - hostname: {{ node.name }}
+    role: {{ node.role }}
     interfaces:
       - name: eno1
         macAddress: {{ node.mac }}

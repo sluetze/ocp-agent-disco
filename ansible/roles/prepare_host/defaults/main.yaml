@@ -12,7 +12,7 @@ dns_install: false # installs dnsmasq on the node and configures the lookups
 install_registry: false # defines if you install the registry or not. The binary will get downloaded anyway
 openstack_infra: false
 mirror_mode: file # mirror_mode defines, if you mirror to disk (file) or into the created mirror_registry (registry)
-mirror_v2: false # mirror_v2 defines if oc-mirror is executed with the --v2 option.
+mirror_v2: true # mirror_v2 defines if oc-mirror is executed with the --v2 option.
 # this currently does not support all settings
 # to be fair it only covers HEAD mirroring of the full catalog
 # from 4.18 onwards v1 is deprecated
@@ -59,21 +59,27 @@ ocp_machines:
   - name: node1
     mac: 00:ef:44:21:e6:01
     ip: "{{ ocp_machine_network.split('.')[:3] | join('.') }}.11"
+    role: master
   - name: node2
     mac: 00:ef:44:21:e6:02
     ip: "{{ ocp_machine_network.split('.')[:3] | join('.') }}.12"
+    role: master
   - name: node3
     mac: 00:ef:44:21:e6:03
     ip: "{{ ocp_machine_network.split('.')[:3] | join('.') }}.13"
+    role: master
   - name: node4
     mac: 00:ef:44:21:e6:04
     ip: "{{ ocp_machine_network.split('.')[:3] | join('.') }}.14"
+    role: worker
   - name: node5
     mac: 00:ef:44:21:e6:05
     ip: "{{ ocp_machine_network.split('.')[:3] | join('.') }}.15"
+    role: worker
   - name: node6
     mac: 00:ef:44:21:e6:06
     ip: "{{ ocp_machine_network.split('.')[:3] | join('.') }}.16"
+    role: worker
 
 ocp_dns_server: 192.168.111.1
 
