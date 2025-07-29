@@ -32,4 +32,9 @@ hosts:
             next-hop-address: {{ ocp_machine_network_default_gw }}
             next-hop-interface: eno1
             table-id: 254
+          # metadata server for OpenStack
+          - destination: 169.254.169.254/32
+            next-hop-address: {{ ocp_machine_network_default_gw }}
+            next-hop-interface: eno1
+            table-id: 254
 {% endfor %}
