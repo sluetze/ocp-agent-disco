@@ -2,21 +2,23 @@
 ---
 security_group_rules:
   ocp_nodes:
-    - { proto: udp, port: '6081', description: "tbd" }
+    - { proto: udp, port: '6081', description: "tbd" } # 6080 cluster-kube-api
     - { proto: tcp, port: '80', description: "openshift console / ingress" }
     - { proto: tcp, port: '443', description: "openshift console / ingress" }
-    - { proto: tcp, port: '9000:9999', description: "tbd" }
-    - { proto: udp, port: '9000:9999', description: "tbd" }
-    - { proto: tcp, port: '30000:32767', description: "tbd" }
-    - { proto: udp, port: '30000:32767', description: "tbd" }
+    - { proto: tcp, port: '9000:9999', description: "Host level services" }
+    - { proto: udp, port: '9000:9999', description: "Host level services" }
+    - { proto: tcp, port: '30000:32767', description: "Kubernetes node ports" }
+    - { proto: udp, port: '30000:32767', description: "Kubernetes node ports" }
     - { proto: udp, port: '4789', description: "tbd" }
-    - { proto: tcp, port: '22623', description: "tbd" }
-    - { proto: tcp, port: '2379:2380', description: "tbd" }
+    - { proto: tcp, port: '22623', description: "machine-config" } # 22624?
+    - { proto: tcp, port: '2379:2380', description: "etcd" }
     - { proto: tcp, port: '1936', description: "tbd" }
-    - { proto: tcp, port: '10250:10259', description: "tbd" }
+    - { proto: tcp, port: '10250:10259', description: "kube-controller, kube-scheduler-cluster-policy" }
     - { proto: tcp, port: '22', description: "ssh" }
     - { proto: tcp, port: '6443', description: "kube-api" }
-    - { proto: tcp, port: '8090', description: "assisted service (install)" }
+    - { proto: tcp, port: '8090', description: "assisted service (install)" } # 8080 cloud-credentials?
+    - { proto: tcp, port: '53', description: "coredns"}
+    - { proto: tcp, port: '111', description: "rpcbind"} # optional
     - { proto: icmp, description: "debug" }
 
   icmp_access:
